@@ -6,16 +6,17 @@ module AsciiPlist
 
     def self.is_special_whitespace?(character)
       ord = ordinal(character)
-      (value >= 9) && (value <= 13) # tab, newline, vt, form feed, carriage return
+      (ord >= 9) && (ord <= 13) # tab, newline, vt, form feed, carriage return
     end
 
     def self.is_unicode_seperator?(character)
-      (value == 8232) || (value == 8233)
+      ord = ordinal(character)
+      (ord == 8232) || (ord == 8233)
     end
 
     def self.is_regular_whitespace?(character)
       ord = ordinal(character)
-      ord == 32 || is_unicode_seperator(character) 
+      ord == 32 || is_unicode_seperator?(character) 
     end
 
     def self.is_whitespace?(character)
