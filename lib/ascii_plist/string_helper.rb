@@ -4,30 +4,30 @@ module AsciiPlist
       character.unpack('U')[0]
     end
 
-    def self.is_special_whitespace?(character)
+    def self.special_whitespace?(character)
       ord = ordinal(character)
       (ord >= 9) && (ord <= 13) # tab, newline, vt, form feed, carriage return
     end
 
-    def self.is_unicode_seperator?(character)
+    def self.unicode_seperator?(character)
       ord = ordinal(character)
       (ord == 8232) || (ord == 8233)
     end
 
-    def self.is_regular_whitespace?(character)
+    def self.regular_whitespace?(character)
       ord = ordinal(character)
-      ord == 32 || is_unicode_seperator?(character)
+      ord == 32 || unicode_seperator?(character)
     end
 
-    def self.is_whitespace?(character)
-      is_regular_whitespace?(character) || is_special_whitespace?(character)
+    def self.whitespace?(character)
+      regular_whitespace?(character) || special_whitespace?(character)
     end
 
-    def self.is_end_of_line?(character)
-      is_new_line?(character) || is_unicode_seperator?(character)
+    def self.end_of_line?(character)
+      new_line?(character) || unicode_seperator?(character)
     end
 
-    def self.is_new_line?(character)
+    def self.new_line?(character)
       ord = ordinal(character)
       (ord == 13) || (ord == 10)
     end
@@ -38,7 +38,7 @@ module AsciiPlist
       annotation = ''
       while index < end_index
         current_character = contents[index]
-        if !is_end_of_line?(current_character)
+        if !end_of_line?(current_character)
           annotation += current_character
           index += 1
         else
@@ -74,7 +74,7 @@ module AsciiPlist
       while index < length
         current_character = contents[index]
         # Eat Whitespace
-        if is_whitespace?(current_character)
+        if whitespace?(current_character)
           index += 1
           next
         end
