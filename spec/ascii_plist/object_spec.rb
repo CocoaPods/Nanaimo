@@ -79,13 +79,36 @@ module AsciiPlist
 
       it 'writes a non-pretty value without the comment' do
         output, indent = @obj.write(0, false)
-        expect(output).to be_eql "(\n\t\tValues,\n\t\t\"Can Be\",\n\t\tMixed,\n\t\tTypes\n)"
+        expect(output).to be_eql "(\n\tValues,\n\t\"Can Be\",\n\tMixed,\n\tTypes\n)"
         expect(indent).to be_eql 0
       end 
 
       it 'writes a pretty value with the comment' do
         output, indent = @obj.write(0, true)
-        expect(output).to be_eql "(\n\t\tValues /*Comment*/,\n\t\t\"Can Be\" /*Another Comment*/,\n\t\tMixed,\n\t\tTypes\n)"
+        expect(output).to be_eql "(\n\tValues /*Comment*/,\n\t\"Can Be\" /*Another Comment*/,\n\tMixed,\n\tTypes\n)"
+        expect(indent).to be_eql 0
+      end 
+    end
+  end
+
+  describe Dictionary do
+    describe 'in general' do
+      before do
+        value = {
+          String.new('ABCDEFFEDCBA', 'String', 'An Arbitrary Identifier') => Dictionary.new({}, 'PBXNativeProject', 'Hmm'),
+        }
+        @obj = Dictionary.new(value, 'Dictionary', 'A whimsical value')
+      end
+
+      it 'writes a non-pretty value without the comment' do
+        output, indent = @obj.write(0, false)
+        expect(output).to be_eql "{\n\tABCDEFFEDCBA = {\n\t};\n}"
+        expect(indent).to be_eql 0
+      end 
+
+      it 'writes a pretty value with the comment' do
+        output, indent = @obj.write(0, true)
+        expect(output).to be_eql "{\n\tABCDEFFEDCBA /*An Arbitrary Identifier*/ = {\n\t};\n}"
         expect(indent).to be_eql 0
       end 
     end

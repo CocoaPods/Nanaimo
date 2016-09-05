@@ -14,6 +14,18 @@ module AsciiPlist
       raise 'Norbert::Item subclasses are required to subclass write'
     end
 
+    def eql?(object)
+      type_name == object.type_name && value == object.value && annotation == object.annotation
+    end
+
+    def hash
+      value.hash
+    end
+
+    def <=>(object)
+      value <=> object.value
+    end
+
     private
 
     def write_annotation
@@ -50,7 +62,7 @@ module AsciiPlist
       output += write_annotation if pretty
 
       return output, indent_level
-    end 
+    end
   end
 
   class QuotedString < Object
@@ -73,7 +85,6 @@ module AsciiPlist
       value.each_with_index do |v, index|
         val, indent_level = v.write(indent_level, pretty)
         output += write_indent(indent_level)
-        output += "\t"
         output += val
         output += ',' if index < last_index
         output += "\n"
@@ -86,5 +97,26 @@ module AsciiPlist
   end
 
   class Dictionary < Object
+    def write(indent_level, pretty)
+      output = "{\n"
+      indent_level = push_indent(indent_level)
+      sorted_keys = value.keys.sort
+      last_index = sorted_keys.length - 1
+      sorted_keys.each_with_index do |key, index|
+        key_string, indent_level = key.write(indent_level, pretty)
+        value_string, indent_level = value[key].write(indent_level, pretty)
+        output += write_indent(indent_level)
+        output += key_string
+        output += ' = '
+        output += value_string
+        output += ';'
+        output += "\n"
+      end
+      indent_level = pop_indent(indent_level)
+      output += write_indent(indent_level)
+      output += '}'
+
+      return output, indent_level
+    end
   end
 end
