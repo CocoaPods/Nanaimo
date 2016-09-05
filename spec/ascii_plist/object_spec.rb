@@ -44,4 +44,24 @@ module AsciiPlist
       end 
     end
   end
+
+  describe QuotedString do
+    describe 'in general' do
+      before do
+        @obj = QuotedString.new('Value', 'QuotedString', 'A whimsical value')
+      end
+
+      it 'writes a non-pretty value without the comment' do
+        output, indent = @obj.write(0, false)
+        expect(output).to be_eql '"Value"'
+        expect(indent).to be_eql 0
+      end 
+
+      it 'writes a pretty value with the comment' do
+        output, indent = @obj.write(0, true)
+        expect(output).to be_eql '"Value" /*A whimsical value*/'
+        expect(indent).to be_eql 0
+      end 
+    end
+  end
 end
