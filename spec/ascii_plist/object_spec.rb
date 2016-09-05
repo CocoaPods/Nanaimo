@@ -79,13 +79,13 @@ module AsciiPlist
 
       it 'writes a non-pretty value without the comment' do
         output, indent = @obj.write(0, false)
-        expect(output).to be_eql "(\nValues,\n\"Can Be\",\nMixed,\nTypes\n)"
+        expect(output).to be_eql "(\n\t\tValues,\n\t\t\"Can Be\",\n\t\tMixed,\n\t\tTypes\n)"
         expect(indent).to be_eql 0
       end 
 
       it 'writes a pretty value with the comment' do
         output, indent = @obj.write(0, true)
-        expect(output).to be_eql "(\nValues /*Comment*/,\n\"Can Be\" /*Another Comment*/,\nMixed,\nTypes\n)"
+        expect(output).to be_eql "(\n\t\tValues /*Comment*/,\n\t\t\"Can Be\" /*Another Comment*/,\n\t\tMixed,\n\t\tTypes\n)"
         expect(indent).to be_eql 0
       end 
     end

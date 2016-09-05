@@ -26,7 +26,21 @@ module AsciiPlist
     end
 
     def pop_indent(level)
-      max(0, level - 1)
+      level = level - 1
+      if level < 0
+        return 0
+      else
+        return level
+      end
+    end
+
+    def write_indent(level)
+      indent = ''
+      level.times do |i|
+        indent += "\t"
+      end
+
+      indent
     end
   end
 
@@ -54,13 +68,17 @@ module AsciiPlist
   class Array < Object
     def write(indent_level, pretty)
       output = "(\n"
+      indent_level = push_indent(indent_level)
       last_index = value.length - 1
       value.each_with_index do |v, index|
         val, indent_level = v.write(indent_level, pretty)
+        output += write_indent(indent_level)
+        output += "\t"
         output += val
         output += ',' if index < last_index
         output += "\n"
       end
+      indent_level = pop_indent(indent_level)
       output += ")"
 
       return output, indent_level
