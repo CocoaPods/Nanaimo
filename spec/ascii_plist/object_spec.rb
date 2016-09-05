@@ -8,7 +8,7 @@ module AsciiPlist
       end
 
       it 'raises when calling the default write implementation' do
-        expect { @obj.write(0, false) }.to raise_error
+        expect { @obj.write(0, false) }.to raise_error(RuntimeError)
       end
     end
 
