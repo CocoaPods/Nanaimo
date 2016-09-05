@@ -31,6 +31,12 @@ module AsciiPlist
   end
 
   class String < Object
+    def write(indent_level, pretty)
+      output = value
+      output += write_annotation if pretty
+
+      return output, indent_level
+    end 
   end
 
   class QuotedString < Object
