@@ -1,4 +1,4 @@
-require "ascii_plist/version"
+require 'ascii_plist/version'
 
 module AsciiPlist
   require 'ascii_plist/object'

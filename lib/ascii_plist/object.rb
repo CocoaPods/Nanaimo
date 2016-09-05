@@ -10,7 +10,7 @@ module AsciiPlist
       raise 'Item cannot be initialize with a nil value' if value.nil?
     end
 
-    def write(indent_level, pretty)
+    def write(_indent_level, _pretty)
       raise 'Norbert::Item subclasses are required to subclass write'
     end
 
@@ -29,7 +29,7 @@ module AsciiPlist
     private
 
     def write_annotation
-      return '' unless annotation && annotation.length > 0
+      return '' unless annotation && !annotation.empty?
       " /*#{annotation}*/"
     end
 
@@ -38,7 +38,7 @@ module AsciiPlist
     end
 
     def pop_indent(level)
-      level = level - 1
+      level -= 1
       if level < 0
         return 0
       else
@@ -48,7 +48,7 @@ module AsciiPlist
 
     def write_indent(level)
       indent = ''
-      level.times do |i|
+      level.times do |_i|
         indent += "\t"
       end
 
@@ -61,7 +61,7 @@ module AsciiPlist
       output = value
       output += write_annotation if pretty
 
-      return output, indent_level
+      [output, indent_level]
     end
   end
 
@@ -70,8 +70,8 @@ module AsciiPlist
       output = "\"#{value}\""
       output += write_annotation if pretty
 
-      return output, indent_level
-    end 
+      [output, indent_level]
+    end
   end
 
   class Data < Object
@@ -90,9 +90,9 @@ module AsciiPlist
         output += "\n"
       end
       indent_level = pop_indent(indent_level)
-      output += ")"
+      output += ')'
 
-      return output, indent_level
+      [output, indent_level]
     end
   end
 
@@ -102,7 +102,7 @@ module AsciiPlist
       indent_level = push_indent(indent_level)
       sorted_keys = value.keys.sort
       last_index = sorted_keys.length - 1
-      sorted_keys.each_with_index do |key, index|
+      sorted_keys.each_with_index do |key, _index|
         key_string, indent_level = key.write(indent_level, pretty)
         value_string, indent_level = value[key].write(indent_level, pretty)
         output += write_indent(indent_level)
@@ -116,7 +116,7 @@ module AsciiPlist
       output += write_indent(indent_level)
       output += '}'
 
-      return output, indent_level
+      [output, indent_level]
     end
   end
 end

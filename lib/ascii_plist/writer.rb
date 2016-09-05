@@ -5,8 +5,6 @@ module AsciiPlist
     end
 
     def write!
-
     end
   end
 end
-

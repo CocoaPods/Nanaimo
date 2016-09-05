@@ -16,7 +16,7 @@ module AsciiPlist
 
     def self.is_regular_whitespace?(character)
       ord = ordinal(character)
-      ord == 32 || is_unicode_seperator?(character) 
+      ord == 32 || is_unicode_seperator?(character)
     end
 
     def self.is_whitespace?(character)
@@ -29,7 +29,7 @@ module AsciiPlist
 
     def self.is_new_line?(character)
       ord = ordinal(character)
-      (ord == 13) || (ord == 10)  
+      (ord == 13) || (ord == 10)
     end
 
     def self.read_singleline_comment(contents, start_index)
@@ -46,7 +46,7 @@ module AsciiPlist
         end
       end
 
-      return index, annotation
+      [index, annotation]
     end
 
     def self.read_multiline_comment(contents, start_index)
@@ -64,7 +64,7 @@ module AsciiPlist
         end
       end
 
-      return index, annotation
+      [index, annotation]
     end
 
     def self.index_of_next_non_space(contents, current_index)
@@ -101,4 +101,3 @@ module AsciiPlist
     end
   end
 end
-

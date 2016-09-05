@@ -1,6 +1,5 @@
 module AsciiPlist
   class Reader
-
     attr_accessor :plist
 
     def self.from_file(file_path)
@@ -33,7 +32,7 @@ module AsciiPlist
     end
 
     def read_string_encoding
-      #TODO
+      # TODO
     end
 
     def parse_object
