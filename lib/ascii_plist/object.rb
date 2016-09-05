@@ -52,6 +52,19 @@ module AsciiPlist
   end
 
   class Array < Object
+    def write(indent_level, pretty)
+      output = "(\n"
+      last_index = value.length - 1
+      value.each_with_index do |v, index|
+        val, indent_level = v.write(indent_level, pretty)
+        output += val
+        output += ',' if index < last_index
+        output += "\n"
+      end
+      output += ")"
+
+      return output, indent_level
+    end
   end
 
   class Dictionary < Object

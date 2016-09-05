@@ -64,4 +64,30 @@ module AsciiPlist
       end 
     end
   end
+
+  describe Array do
+    describe 'in general' do
+      before do
+        value = [
+          String.new('Values', 'String', 'Comment'),
+          QuotedString.new('Can Be', 'String', 'Another Comment'),
+          String.new('Mixed', 'String', nil),
+          String.new('Types', 'String', nil)
+        ]
+        @obj = Array.new(value, 'Data', 'A whimsical value')
+      end
+
+      it 'writes a non-pretty value without the comment' do
+        output, indent = @obj.write(0, false)
+        expect(output).to be_eql "(\nValues,\n\"Can Be\",\nMixed,\nTypes\n)"
+        expect(indent).to be_eql 0
+      end 
+
+      it 'writes a pretty value with the comment' do
+        output, indent = @obj.write(0, true)
+        expect(output).to be_eql "(\nValues /*Comment*/,\n\"Can Be\" /*Another Comment*/,\nMixed,\nTypes\n)"
+        expect(indent).to be_eql 0
+      end 
+    end
+  end
 end
