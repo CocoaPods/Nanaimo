@@ -94,6 +94,12 @@ module AsciiPlist
           end
         end
 
+        # Eat Whitespace
+        if whitespace?(current_character)
+          index += 1
+          next
+        end
+
         return index, annotation
       end
     end

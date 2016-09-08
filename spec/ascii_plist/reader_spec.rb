@@ -36,12 +36,12 @@ module AsciiPlist
           expect(@result.root_object).to be_a AsciiPlist::Array
         end
 
-        xit 'should have two values' do
+        it 'should have two values' do
           expect(@result.root_object.value.count).to eql 2
         end
 
-        xit 'should maintain ordering' do
-          expect(@result.root_object.value[0].value).to eql 'IDENTIFIER'
+        it 'should maintain ordering' do
+          expect(@result.root_object.value.map(&:value)).to eql %w(IDENTIFIER ANOTHER_IDENTIFIER)
         end
       end
     end
@@ -52,15 +52,15 @@ module AsciiPlist
         @result = @reader.parse!
       end
 
-      xit 'should return a plist' do
+      it 'should return a plist' do
         expect(@result).to be_a Plist
       end
 
-      xit 'should have a AsciiPlist::Dictionary as the root_object' do
+      it 'should have a AsciiPlist::Dictionary as the root_object' do
         expect(@result.root_object).to be_a AsciiPlist::Dictionary
       end
 
-      xit 'should have four keys' do
+      it 'should have four keys' do
         expect(@result.root_object.value.keys.count).to eql 4
       end
     end
