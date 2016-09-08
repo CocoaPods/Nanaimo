@@ -2,26 +2,47 @@ require 'spec_helper'
 
 module AsciiPlist
   describe Reader do
-    describe 'reading root level arrays' do
-      before do
-        @reader = Reader.new("(\n\tIDENTIFIER,\nANOTHER_IDENTIFIER)")
-        @result = @reader.parse!
+    describe 'Arrays' do
+      describe 'that are emtpy' do
+        before do
+          @reader = Reader.new("()")
+          @result = @reader.parse!
+        end
+
+        it 'should return a plist' do
+          expect(@result).to be_a Plist
+        end
+
+        it 'should have a AsciiPlist::Array as the root_object' do
+          expect(@result.root_object).to be_a AsciiPlist::Array
+        end
+
+        it 'should have no values' do
+          expect(@result.root_object.value.count).to eql 0
+        end
       end
 
-      it 'should return a plist' do
-        expect(@result).to be_a Plist
-      end
+      describe 'with values' do
+        before do
+          @reader = Reader.new("(\n\tIDENTIFIER,\nANOTHER_IDENTIFIER)")
+          @result = @reader.parse!
+        end
 
-      it 'should have a AsciiPlist::Array as the root_object' do
-        expect(@result.root_object).to be_a AsciiPlist::Array
-      end
+        it 'should return a plist' do
+          expect(@result).to be_a Plist
+        end
 
-      xit 'should have two values' do
-        expect(@result.root_object.value.count).to eql 2
-      end
+        it 'should have a AsciiPlist::Array as the root_object' do
+          expect(@result.root_object).to be_a AsciiPlist::Array
+        end
 
-      xit 'should maintain ordering' do
-        expect(@result.root_object.value[0].value).to eql 'IDENTIFIER'
+        xit 'should have two values' do
+          expect(@result.root_object.value.count).to eql 2
+        end
+
+        xit 'should maintain ordering' do
+          expect(@result.root_object.value[0].value).to eql 'IDENTIFIER'
+        end
       end
     end
 
