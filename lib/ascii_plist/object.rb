@@ -47,12 +47,7 @@ module AsciiPlist
     end
 
     def write_indent(level)
-      indent = ''
-      level.times do |_i|
-        indent += "\t"
-      end
-
-      indent
+      indent = "\t" * level
     end
   end
 
