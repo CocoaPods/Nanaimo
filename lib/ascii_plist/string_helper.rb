@@ -67,7 +67,12 @@ module AsciiPlist
       [index, annotation]
     end
 
+    def self.read_comment(contents, start_index)
+
+    end
+
     def self.index_of_next_non_space(contents, current_index)
+      p contents
       index = current_index
       length = contents.length
       annotation = ''

@@ -4,6 +4,8 @@ module AsciiPlist
     #
     attr_accessor :root_object
 
+    # @return [String] The encoding of the plist.
+    #
     attr_accessor :file_type
   end
 end
