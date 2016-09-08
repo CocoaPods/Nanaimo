@@ -49,7 +49,7 @@ module AsciiPlist
         parse_array
       elsif starting_character == '<'
         raise 'Data is currently unsupported'
-      elsif starting_character == "'" || '"'
+      elsif starting_character =~ /['"]/
         parse_quotedstring
       else
         parse_string
