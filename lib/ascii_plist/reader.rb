@@ -22,10 +22,6 @@ module AsciiPlist
 
     private
 
-    attr_accessor :index
-
-    attr_accessor :contents
-
     def ensure_ascii_plist!
       prefix = @contents[0, 6]
       if prefix == 'bplist'
@@ -44,9 +40,9 @@ module AsciiPlist
     end
 
     def parse_object
-      index, annotation = StringHelper.index_of_next_non_space(contents, index)
-      return if index == contents.length
-      starting_character = contents[index]
+      @index, annotation = StringHelper.index_of_next_non_space(@contents, @index)
+      return if @index == @contents.length
+      starting_character = @contents[@index]
       if starting_character == '{'
         parse_dictionary
       elsif starting_character == '('
@@ -68,10 +64,10 @@ module AsciiPlist
 
     def parse_array
       objects = []
-      index += 1
-      start_index = index
+      @index += 1
+      start_index = @index
 
-      AsciiPlist.new(objects, 'array', nil)
+      AsciiPlist::Array.new(objects, 'array', nil)
     end
 
     def parse_dictionary

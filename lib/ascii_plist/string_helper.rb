@@ -82,9 +82,7 @@ module AsciiPlist
         # Comment Detection
         if current_character == '/'
           index += 1
-
           current_character = contents[index]
-
           if current_character == '/'
             index += 1
             index, annotation = read_singleline_comment(contents, index)
@@ -96,7 +94,7 @@ module AsciiPlist
           end
         end
 
-        [index, annotation]
+        return index, annotation
       end
     end
   end
