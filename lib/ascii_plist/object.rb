@@ -90,7 +90,7 @@ module AsciiPlist
         output += "\n"
       end
       indent_level = pop_indent(indent_level)
-      output += ')'
+      output += write_indent(indent_level) + ')'
 
       [output, indent_level]
     end

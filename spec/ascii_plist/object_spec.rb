@@ -88,6 +88,12 @@ module AsciiPlist
         expect(output).to be_eql "(\n\tValues /*Comment*/,\n\t\"Can Be\" /*Another Comment*/,\n\tMixed,\n\tTypes\n)"
         expect(indent).to be_eql 0
       end
+
+      it 'writes an indented pretty value with the comment' do
+        output, indent = @obj.write(2, true)
+        expect(output).to eq "(\n\t\t\tValues /*Comment*/,\n\t\t\t\"Can Be\" /*Another Comment*/,\n\t\t\tMixed,\n\t\t\tTypes\n\t\t)"
+        expect(indent).to eq 2
+      end
     end
   end
 
