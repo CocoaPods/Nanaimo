@@ -5,7 +5,7 @@ module AsciiPlist
     describe 'Arrays' do
       describe 'that are emtpy' do
         before do
-          @reader = Reader.new("()")
+          @reader = Reader.new('()')
           @result = @reader.parse!
         end
 
@@ -66,7 +66,7 @@ module AsciiPlist
         expect(@result.root_object.value.keys.count).to eq 4
       end
 
-      context "when the dictionary is empty" do
+      context 'when the dictionary is empty' do
         let(:string) { '{}' }
 
         it 'parses correctly' do
@@ -76,12 +76,12 @@ module AsciiPlist
     end
 
     describe 'quoted strings' do
-      let(:quoted_string) { %("\\"${ABC}\\"") }
+      let(:quoted_string) { %("\\"${ABC}\\"\\n\\t\\U3232\\U0095\\U3232") }
       let(:reader) { Reader.new("{key = #{quoted_string}}") }
       subject { reader.parse!.root_object }
 
-      it "parses" do
-        expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', '') => AsciiPlist::QuotedString.new(%("${ABC}"), '') }, '')
+      it 'parses' do
+        expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', '') => AsciiPlist::QuotedString.new(%("${ABC}"\n\tಠ_ಠ), '') }, '')
       end
     end
   end
