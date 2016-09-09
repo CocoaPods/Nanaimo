@@ -61,30 +61,5 @@ module AsciiPlist
         expect(StringHelper.end_of_line?('A')).to be_falsy
       end
     end
-
-    describe '#index_of_next_non_space' do
-      it 'can return a single line comment annotation' do
-        input = "//this is a comment.\n("
-        index, comment = StringHelper.index_of_next_non_space(input, 0)
-        expect(comment).to be_eql 'this is a comment.'
-        expect(index).to be_eql 21 # (
-      end
-
-      it 'can return a sigle line multi line comment annotation' do
-        input = '/*this is a comment.*/ ('
-        index, comment = StringHelper.index_of_next_non_space(input, 0)
-        expect(comment).to be_eql 'this is a comment.'
-        expect(index).to be_eql 23 # (
-        expect(input[index]).to be_eql '('
-      end
-
-      it 'can return a multi line comment annotation' do
-        input = "/*this is a comment.\nthat spans across multiple lines.*/ ("
-        index, comment = StringHelper.index_of_next_non_space(input, 0)
-        expect(comment).to be_eql "this is a comment.\nthat spans across multiple lines."
-        expect(index).to be_eql 57 # (
-        expect(input[index]).to be_eql '('
-      end
-    end
   end
 end

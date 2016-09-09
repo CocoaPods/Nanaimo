@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 module AsciiPlist
   class StringHelper
     def self.ordinal(character)
@@ -30,6 +31,10 @@ module AsciiPlist
     def self.new_line?(character)
       ord = ordinal(character)
       (ord == 13) || (ord == 10)
+    end
+
+    def self.unquotify_substring(string, start_index, end_index)
+      unquotify_string(string[start_index..end_index])
     end
 
     # Credit to Samantha Marshall
@@ -86,72 +91,6 @@ module AsciiPlist
         end
       end
       formatted_string
-    end
-
-    def self.read_singleline_comment(contents, start_index)
-      index = start_index
-      end_index = contents.length
-      index += 1 while index < end_index && !end_of_line?(contents[index])
-      annotation = contents[start_index..index-1]
-
-      [index, annotation]
-    end
-
-    def self.eat_whitespace(contents, index)
-      si = index
-      end_index = contents.length
-      index += 1 while index < end_index && whitespace?(contents[index])
-      index
-    end
-
-    def self.read_multiline_comment(contents, start_index)
-      index = start_index
-      unless contents[start_index..-1] =~ /\A(?:.+?)(?=\*\/)/m
-        raise "#{contents[start_index..-1].inspect} failed to terminate multiline comment"
-      end
-      annotation = $&
-      index += annotation.size + 2
-
-      [index, annotation]
-    end
-
-    def self.index_of_next_non_space(contents, current_index)
-      index = current_index
-      length = contents.length
-      annotation = ''
-      loop do
-        break unless index < length
-        current_character = contents[index]
-        # Eat Whitespace
-        if whitespace?(current_character)
-          index += 1
-          next
-        end
-
-        # Comment Detection
-        if current_character == '/'
-          index += 1
-          current_character = contents[index]
-          if current_character == '/'
-            index += 1
-            index, annotation = read_singleline_comment(contents, index)
-            next
-          elsif current_character == '*'
-            index += 1
-            index, annotation = read_multiline_comment(contents, index)
-            next
-          end
-        end
-
-        # Eat Whitespace
-        if whitespace?(current_character)
-          index += 1
-          next
-        end
-
-        break
-      end
-      return index, annotation
     end
   end
 end

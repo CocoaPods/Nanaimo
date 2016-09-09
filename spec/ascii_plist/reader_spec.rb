@@ -87,6 +87,14 @@ module AsciiPlist
         it 'parses correctly' do
           expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, ''), 'ascii')
         end
+
+        context "and there are newlines" do
+          let(:string) { "\t\n\t{\n\t\n}" }
+
+          it 'parses correctly' do
+            expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, ''), 'ascii')
+          end
+        end
       end
     end
 
