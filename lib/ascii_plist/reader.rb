@@ -75,16 +75,19 @@ module AsciiPlist
 
     def parse_quotedstring
       quote = @contents[@index]
-      index = start_index = @index += 1
+      @index += 1
+      start_index = @index
       length = @contents.length
-      while index < length
-        if @contents[index] == "\\"
-          index += 1
-        elsif @contents[index] == quote
-          @index = index + 1
-          return AsciiPlist::QuotedString.new(@contents[start_index..index], "#{quote} string", nil)
+      while @index < length
+        if @contents[@index] == "\\"
+          @index += 2
+        elsif @contents[@index] == quote
+          string = @contents[start_index..@index - 1]
+          string = StringHelper.unquotify_string(string)
+          @index += 1
+          return AsciiPlist::QuotedString.new(string, "#{quote} string", nil)
         else
-          index += 1
+          @index += 1
         end
       end
       raise "unterminated quoted string started at #{start_index}, expected #{quote} but never found it"

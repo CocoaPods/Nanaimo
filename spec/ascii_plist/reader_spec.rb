@@ -74,5 +74,15 @@ module AsciiPlist
         end
       end
     end
+
+    describe 'quoted strings' do
+      let(:quoted_string) { %("\\"${ABC}\\"") }
+      let(:reader) { Reader.new("{key = #{quoted_string}}") }
+      subject { reader.parse!.root_object }
+
+      it "parses" do
+        expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', 'string', '') => AsciiPlist::QuotedString.new(%("${ABC}"), '" string', '') }, 'dictionary', '')
+      end
+    end
   end
 end

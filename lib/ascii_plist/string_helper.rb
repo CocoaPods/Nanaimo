@@ -32,6 +32,10 @@ module AsciiPlist
       (ord == 13) || (ord == 10)
     end
 
+    def self.unquotify_string(string)
+      string.gsub(/\\(.)/, '\1')
+    end
+
     def self.read_singleline_comment(contents, start_index)
       index = start_index
       end_index = contents.length
