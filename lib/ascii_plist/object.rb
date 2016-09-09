@@ -1,10 +1,9 @@
 module AsciiPlist
   class Object
-    attr_accessor :value, :type_name, :annotation
+    attr_accessor :value, :annotation
 
-    def initialize(value, type_name, annotation)
+    def initialize(value, annotation)
       self.value = value
-      self.type_name = type_name
       self.annotation = annotation
 
       raise 'Item cannot be initialize with a nil value' if value.nil?
@@ -14,10 +13,10 @@ module AsciiPlist
       raise 'Norbert::Item subclasses are required to subclass write'
     end
 
-    def eql?(object)
-      type_name == object.type_name && value == object.value && annotation == object.annotation
+    def ==(object)
+      value == object.value && annotation == object.annotation
     end
-    alias == eql?
+    alias eql? ==
 
     def hash
       value.hash

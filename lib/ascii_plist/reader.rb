@@ -70,7 +70,7 @@ module AsciiPlist
       end
       match = $1
       @index += match.size
-      AsciiPlist::String.new(match, 'string', nil)
+      AsciiPlist::String.new(match, nil)
     end
 
     def parse_quotedstring
@@ -85,7 +85,7 @@ module AsciiPlist
           string = @contents[start_index..@index - 1]
           string = StringHelper.unquotify_string(string)
           @index += 1
-          return AsciiPlist::QuotedString.new(string, "#{quote} string", nil)
+          return AsciiPlist::QuotedString.new(string, nil)
         else
           @index += 1
         end
@@ -109,7 +109,7 @@ module AsciiPlist
       end
       @index += 1
 
-      AsciiPlist::Array.new(objects, 'array', nil)
+      AsciiPlist::Array.new(objects, nil)
     end
 
     def parse_dictionary
@@ -138,7 +138,7 @@ module AsciiPlist
       end
       @index += 1
 
-      AsciiPlist::Dictionary.new(objects, 'dictionary', nil)
+      AsciiPlist::Dictionary.new(objects, nil)
     end
 
     def parse_data

@@ -63,14 +63,14 @@ module AsciiPlist
       end
 
       it 'should have four keys' do
-        expect(@result.root_object.value.keys.count).to eql 4
+        expect(@result.root_object.value.keys.count).to eq 4
       end
 
       context "when the dictionary is empty" do
         let(:string) { '{}' }
 
         it 'parses correctly' do
-          expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, 'dictionary', ''), 'ascii')
+          expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, ''), 'ascii')
         end
       end
     end
@@ -81,7 +81,7 @@ module AsciiPlist
       subject { reader.parse!.root_object }
 
       it "parses" do
-        expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', 'string', '') => AsciiPlist::QuotedString.new(%("${ABC}"), '" string', '') }, 'dictionary', '')
+        expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', '') => AsciiPlist::QuotedString.new(%("${ABC}"), '') }, '')
       end
     end
   end

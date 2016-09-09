@@ -4,7 +4,7 @@ module AsciiPlist
   describe Object do
     describe 'in general' do
       before do
-        @obj = Object.new('', '', nil)
+        @obj = Object.new('', nil)
       end
 
       it 'raises when calling the default write implementation' do
@@ -14,12 +14,12 @@ module AsciiPlist
 
     describe '#write_annotation' do
       it 'outputs annotations as multiline' do
-        object = Object.new('', '', 'this is a comment')
+        object = Object.new('', 'this is a comment')
         expect(object.send(:write_annotation)).to be_eql ' /*this is a comment*/'
       end
 
       it 'returns an empty string if there is no annotation' do
-        object = Object.new('', '', nil)
+        object = Object.new('', nil)
         expect(object.send(:write_annotation)).to be_eql ''
       end
     end
@@ -28,7 +28,7 @@ module AsciiPlist
   describe String do
     describe 'in general' do
       before do
-        @obj = String.new('Value', 'String', 'A whimsical value')
+        @obj = String.new('Value', 'A whimsical value')
       end
 
       it 'writes a non-pretty value without the comment' do
@@ -48,7 +48,7 @@ module AsciiPlist
   describe QuotedString do
     describe 'in general' do
       before do
-        @obj = QuotedString.new('Value', 'QuotedString', 'A whimsical value')
+        @obj = QuotedString.new('Value', 'A whimsical value')
       end
 
       it 'writes a non-pretty value without the comment' do
@@ -69,12 +69,12 @@ module AsciiPlist
     describe 'in general' do
       before do
         value = [
-          String.new('Values', 'String', 'Comment'),
-          QuotedString.new('Can Be', 'String', 'Another Comment'),
-          String.new('Mixed', 'String', nil),
-          String.new('Types', 'String', nil)
+          String.new('Values', 'Comment'),
+          QuotedString.new('Can Be', 'Another Comment'),
+          String.new('Mixed', nil),
+          String.new('Types', nil)
         ]
-        @obj = Array.new(value, 'Data', 'A whimsical value')
+        @obj = Array.new(value, 'A whimsical value')
       end
 
       it 'writes a non-pretty value without the comment' do
@@ -101,9 +101,9 @@ module AsciiPlist
     describe 'in general' do
       before do
         value = {
-          String.new('ABCDEFFEDCBA', 'String', 'An Arbitrary Identifier') => Dictionary.new({}, 'PBXNativeProject', 'Hmm')
+          String.new('ABCDEFFEDCBA', 'An Arbitrary Identifier') => Dictionary.new({}, 'Hmm')
         }
-        @obj = Dictionary.new(value, 'Dictionary', 'A whimsical value')
+        @obj = Dictionary.new(value, 'A whimsical value')
       end
 
       it 'writes a non-pretty value without the comment' do
