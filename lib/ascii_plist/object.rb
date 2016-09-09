@@ -17,6 +17,7 @@ module AsciiPlist
     def eql?(object)
       type_name == object.type_name && value == object.value && annotation == object.annotation
     end
+    alias == eql?
 
     def hash
       value.hash

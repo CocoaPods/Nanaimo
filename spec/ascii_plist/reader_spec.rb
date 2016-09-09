@@ -47,8 +47,10 @@ module AsciiPlist
     end
 
     describe 'reading root level dictionaries' do
+      let(:string) { '{a = "a";"b" = b;"c" = "c";   d = d;}' }
+
       before do
-        @reader = Reader.new('{a = "a";"b" = b;"c" = "c";   d = d;}')
+        @reader = Reader.new(string)
         @result = @reader.parse!
       end
 
@@ -62,6 +64,14 @@ module AsciiPlist
 
       it 'should have four keys' do
         expect(@result.root_object.value.keys.count).to eql 4
+      end
+
+      context "when the dictionary is empty" do
+        let(:string) { '{}' }
+
+        it 'parses correctly' do
+          expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, 'dictionary', ''), 'ascii')
+        end
       end
     end
   end

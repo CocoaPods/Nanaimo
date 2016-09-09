@@ -93,14 +93,15 @@ module AsciiPlist
     def parse_array
       objects = []
       @index += 1
-      loop do
-        objects << parse_object
+      length = @contents.length
+      while @index < length
         @index, _ = advance_to_next_token
-        break unless @contents[@index] == ","
-        @index += 1
-      end
-      unless @contents[@index] == ")"
-        raise "Array missing closing ')', got '#{@contents[@index]}' instead"
+        break if @contents[@index] == ")"
+
+        objects << parse_object
+
+        @index, _ = advance_to_next_token
+        @index += 1 if @contents[@index] == ","
       end
       @index += 1
 
