@@ -30,6 +30,10 @@ module AsciiPlist
       format('<%s %s>', self.class, self.value)
     end
 
+    def as_ruby
+      raise "unimplemented"
+    end
+
     private
 
     def write_annotation
@@ -62,6 +66,10 @@ module AsciiPlist
 
       [output, indent_level]
     end
+
+    def as_ruby
+      value
+    end
   end
 
   class QuotedString < Object
@@ -70,6 +78,9 @@ module AsciiPlist
       output += write_annotation if pretty
 
       [output, indent_level]
+    end
+    def as_ruby
+      value
     end
   end
 
@@ -92,6 +103,10 @@ module AsciiPlist
       output += write_indent(indent_level) + ')'
 
       [output, indent_level]
+    end
+
+    def as_ruby
+      value.map(&:as_ruby)
     end
   end
 
@@ -116,6 +131,10 @@ module AsciiPlist
       output += '}'
 
       [output, indent_level]
+    end
+
+    def as_ruby
+      Hash[value.map {|k, v| [k.as_ruby, v.as_ruby] }]
     end
   end
 end
