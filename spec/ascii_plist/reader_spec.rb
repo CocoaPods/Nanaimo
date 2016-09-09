@@ -47,16 +47,16 @@ module AsciiPlist
     end
 
     describe 'reading annotations' do
-      let(:string) { '{a /*annotation*/ = ( b /*another annotation*/ )' }
+      let(:string) { '{a /*annotation*/ = ( b /*another annotation*/ )}' }
       let(:reader) { Reader.new(string) }
       subject { reader.parse!.root_object }
 
-      xit 'should read the annotations correctly' do
+      it 'should read the annotations correctly' do
         expect(subject).to eq AsciiPlist::Dictionary.new({
           AsciiPlist::String.new('a', 'annotation') =>
            AsciiPlist::Array.new([
              AsciiPlist::String.new('b', 'another annotation')
-           ])
+           ], '')
         }, '')
       end
     end
