@@ -97,6 +97,13 @@ module AsciiPlist
       [index, annotation]
     end
 
+    def self.eat_whitespace(contents, index)
+      si = index
+      end_index = contents.length
+      index += 1 while index < end_index && whitespace?(contents[index])
+      index
+    end
+
     def self.read_multiline_comment(contents, start_index)
       index = start_index
       unless contents[start_index..-1] =~ /\A(?:.+?)(?=\*\/)/m
@@ -112,7 +119,8 @@ module AsciiPlist
       index = current_index
       length = contents.length
       annotation = ''
-      while index < length
+      loop do
+        break unless index < length
         current_character = contents[index]
         # Eat Whitespace
         if whitespace?(current_character)
@@ -141,8 +149,9 @@ module AsciiPlist
           next
         end
 
-        return index, annotation
+        break
       end
+      return index, annotation
     end
   end
 end

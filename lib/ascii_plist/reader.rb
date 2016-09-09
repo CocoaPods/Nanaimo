@@ -43,8 +43,13 @@ module AsciiPlist
       StringHelper.index_of_next_non_space(@contents, @index)
     end
 
+    def advance_past_whitespace!
+      # return
+      @index = StringHelper.eat_whitespace(@contents, @index)
+    end
+
     def parse_object
-      @index, annotation = advance_to_next_token
+      @index, _comment = advance_to_next_token
       i = @index
       return if @index == @contents.length
       starting_character = @contents[@index]
@@ -59,8 +64,8 @@ module AsciiPlist
       else
         parse_string
       end.tap do |o|
+        @index, o.annotation = advance_to_next_token
         warn "parsed #{o.inspect} from #{i}..<#{@index}" if ENV["ASCII_PLIST_DEBUG"]
-        o.annotation = annotation
       end
     end
 
@@ -98,12 +103,12 @@ module AsciiPlist
       @index += 1
       length = @contents.length
       while @index < length
-        @index, _ = advance_to_next_token
+        advance_past_whitespace!
         break if @contents[@index] == ")"
 
         objects << parse_object
 
-        @index, _ = advance_to_next_token
+        advance_past_whitespace!
         break if @contents[@index] == "}"
         @index += 1 if @contents[@index] == ","
       end
@@ -120,7 +125,7 @@ module AsciiPlist
         break if @contents[@index] == "}"
 
         key = parse_object
-        @index, _ = advance_to_next_token
+        advance_past_whitespace!
         unless @contents[@index] == "="
           raise "Dictionary missing value after key #{key.inspect} at index #{@index}, expected '=' and got #{@contents[@index]}"
         end
@@ -129,7 +134,7 @@ module AsciiPlist
         value = parse_object
         objects[key] = value
 
-        @index, _ = advance_to_next_token
+        advance_past_whitespace!
         break if @contents[@index] == "}"
         unless @contents[@index] == ';'
           raise "Dictionary (#{objects}) missing ';' after key-value pair (#{key} = #{value}) at index #{@index} (got #{@contents[@index]})"

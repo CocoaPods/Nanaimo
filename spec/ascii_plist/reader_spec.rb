@@ -91,12 +91,12 @@ module AsciiPlist
     end
 
     describe 'quoted strings' do
-      let(:quoted_string) { %("\\"${ABC}\\"\\n\\t\\U3232\\U0095\\U3232") }
+      let(:quoted_string) { %("\\"${ABC}\\"\\n\\t\\U3232\\U0095\\U3232\p\\\\") }
       let(:reader) { Reader.new("{key = #{quoted_string}}") }
       subject { reader.parse!.root_object }
 
       it 'parses' do
-        expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', '') => AsciiPlist::QuotedString.new(%("${ABC}"\n\tಠ_ಠ), '') }, '')
+        expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', '') => AsciiPlist::QuotedString.new(%("${ABC}"\n\tಠ_ಠp\\), '') }, '')
       end
     end
   end
