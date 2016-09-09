@@ -1,7 +1,7 @@
 module AsciiPlist
   class StringHelper
     def self.ordinal(character)
-      character.unpack('U')[0]
+      character.ord
     end
 
     def self.special_whitespace?(character)
@@ -38,38 +38,39 @@ module AsciiPlist
     #
     # Originally from: http://www.opensource.apple.com/source/CF/CF-744.19/CFOldStylePList.c See `getSlashedChar()`
     def self.unquotify_string(string)
-      formatted_string = ''
+      formatted_string = ::String.new
       extracted_string = string
       string_length = string.size
       all_cases = ["0", "1", "2", "3", "4", "5", "6", "7", "a", "b", "f", "n", "r", "t", "v", "\n", "U"]
       index = 0
       while index < string_length
-        current_char = extracted_string[index]
-        if current_char == '\\'
-          next_char = extracted_string[index+1]
+        if escape_index = extracted_string.index("\\", index)
+          formatted_string << extracted_string[index..escape_index-1] unless index == escape_index
+          index = escape_index + 1
+          next_char = extracted_string[index]
           if all_cases.include?(next_char)
             index += 1
             if next_char =="'a"
-              formatted_string += "\a"
+              formatted_string << "\a"
             elsif next_char == "b"
-              formatted_string += "\b"
+              formatted_string << "\b"
             elsif next_char == "f"
-              formatted_string += "\f"
+              formatted_string << "\f"
             elsif next_char == "n"
-              formatted_string += "\n"
+              formatted_string << "\n"
             elsif next_char == "r"
-              formatted_string += "\r"
+              formatted_string << "\r"
             elsif next_char == "t"
-              formatted_string += "\t"
+              formatted_string << "\t"
             elsif next_char == "v"
-              formatted_string += "\v"
+              formatted_string << "\v"
             elsif next_char == "\n"
-              formatted_string += "\n"
+              formatted_string << "\n"
             elsif next_char == "U"
-              starting_index = index + 1
+              starting_index = index
               unicode_numbers = extracted_string[starting_index, 4]
               index += 4
-              formatted_string += [unicode_numbers.to_i].pack('U')
+              formatted_string << [unicode_numbers.to_i].pack('U')
             elsif octal_number?(next_char) # https://twitter.com/Catfish_Man/status/658014170055507968
               raise "octal numbers suck"
             else
@@ -77,12 +78,12 @@ module AsciiPlist
             end
           else
             index += 1
-            formatted_string += next_char
+            formatted_string << next_char
           end
         else
-          formatted_string += current_char
+          formatted_string << extracted_string[index..-1]
+          index = string_length
         end
-        index += 1
       end
       formatted_string
     end
@@ -90,34 +91,19 @@ module AsciiPlist
     def self.read_singleline_comment(contents, start_index)
       index = start_index
       end_index = contents.length
-      annotation = ''
-      while index < end_index
-        current_character = contents[index]
-        if !end_of_line?(current_character)
-          annotation += current_character
-          index += 1
-        else
-          break
-        end
-      end
+      index += 1 while index < end_index && !end_of_line?(contents[index])
+      annotation = contents[start_index..index-1]
 
       [index, annotation]
     end
 
     def self.read_multiline_comment(contents, start_index)
       index = start_index
-      end_index = contents.length
-      annotation = ''
-      while index < end_index
-        current_character = contents[index]
-        if current_character == '*' && (index + 1) <= end_index && contents[index + 1] == '/'
-          index += 2
-          break
-        else
-          annotation += current_character
-          index += 1
-        end
+      unless contents[start_index..-1] =~ /\A(?:.+?)(?=\*\/)/m
+        raise "#{contents[start_index..-1].inspect} failed to terminate multiline comment"
       end
+      annotation = $&
+      index += annotation.size + 2
 
       [index, annotation]
     end
