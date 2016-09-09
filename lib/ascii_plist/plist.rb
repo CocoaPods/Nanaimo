@@ -22,10 +22,6 @@ module AsciiPlist
       root_object.hash
     end
 
-    def write(pretty = true)
-      root_object.write(0, pretty).first
-    end
-
     def as_ruby
       root_object.as_ruby
     end
