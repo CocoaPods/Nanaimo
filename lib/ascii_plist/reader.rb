@@ -65,7 +65,7 @@ module AsciiPlist
     end
 
     def parse_string
-      unless @contents[@index..-1] =~ /\A(\w+)/
+      unless @contents[@index..-1] =~ /\A([\w\/.]+)/
         raise "not a valid string at index #{@index} (char is #{@contents[@index]})"
       end
       match = $1
@@ -101,6 +101,7 @@ module AsciiPlist
         objects << parse_object
 
         @index, _ = advance_to_next_token
+        break if @contents[@index] == "}"
         @index += 1 if @contents[@index] == ","
       end
       @index += 1
@@ -126,6 +127,7 @@ module AsciiPlist
         objects[key] = value
 
         @index, _ = advance_to_next_token
+        break if @contents[@index] == "}"
         unless @contents[@index] == ';'
           raise "Dictionary (#{objects}) missing ';' after key-value pair (#{key} = #{value}) at index #{@index} (got #{@contents[@index]})"
         end

@@ -27,6 +27,10 @@ module AsciiPlist
       value <=> object.value
     end
 
+    def to_s
+      format('<%s %s>', self.class, self.value)
+    end
+
     private
 
     def write_annotation
