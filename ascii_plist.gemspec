@@ -6,8 +6,8 @@ require 'ascii_plist/version'
 Gem::Specification.new do |spec|
   spec.name          = 'ascii_plist'
   spec.version       = AsciiPlist::VERSION
-  spec.authors       = ['Danielle Tomlinson']
-  spec.email         = ['dan@tomlinson.io']
+  spec.authors       = ['Danielle Tomlinson', 'Samuel Giddins']
+  spec.email         = ['dan@tomlinson.io', 'segiddins@segiddins.me']
 
   spec.summary       = 'A library for (de)serialization of ASCII Plists.'
   spec.homepage      = 'https://github.com/dantoml/ascii_plist'
