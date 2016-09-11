@@ -5,7 +5,7 @@ module AsciiPlist
     let(:root_object) { nil }
     let(:plist) { Plist.new.tap {|p| p.root_object = root_object } }
     let(:pretty) { true }
-    subject { Writer.new(plist).write(pretty) }
+    subject { Writer.new(plist, pretty).write }
     let(:utf8) { Writer::UTF8 }
 
     describe '#write_annotation' do

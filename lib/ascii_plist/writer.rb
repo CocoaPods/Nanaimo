@@ -2,29 +2,40 @@ module AsciiPlist
   class Writer
     UTF8 = "// !$*UTF8*$!\n".freeze
 
-    def initialize(plist)
+    def initialize(plist, pretty = true, output = ::String.new)
       @plist = plist
+      @pretty = pretty
+      @output = output
+      @indent = 0
     end
 
-    def write(pretty = true, output = ::String.new)
-      output << UTF8
-      write_object(@plist.root_object, 0, pretty, output) << "\n"
+    def write
+      write_utf8
+      write_object(@plist.root_object)
+      output << "\n"
     end
+
+    attr_reader :indent, :pretty, :output
+    private :indent, :pretty, :output
 
     private
 
-    def write_object(object, indent, pretty, output)
+    def write_utf8
+      output << UTF8
+    end
+
+    def write_object(object)
       case object
       when Array, ::Array
-        write_array(object, indent, pretty, output)
+        write_array(object)
       when Dictionary, ::Hash
-        write_dictionary(object, indent, pretty, output)
+        write_dictionary(object)
       when /[^\w\.\/]/, QuotedString, ""
-        write_quoted_string(object, indent, pretty, output)
+        write_quoted_string(object)
       when String, ::String
-        write_string(object, indent, pretty, output)
+        write_string(object)
       when Data
-        write_data(object, indent, pretty, output)
+        write_data(object)
       else
         raise "Cannot write #{object} to an ascii plist"
       end
@@ -32,49 +43,73 @@ module AsciiPlist
       output
     end
 
-    def write_string(object, indent, pretty, output)
-      output << value(object).to_s
+    def write_string(object)
+      output << value_for(object).to_s
     end
 
-    def write_quoted_string(object, indent, pretty, output)
-      output << '"' << StringHelper.quotify_string(value(object)) << '"'
+    def write_quoted_string(object)
+      output << '"' << StringHelper.quotify_string(value_for(object)) << '"'
     end
 
-    def write_data(object, indent, pretty, output)
+    def write_data(object)
       raise "write_data unimplemented"
     end
 
-    def write_array(object, indent, pretty, output)
-      output << "(\n"
-      indent = push_indent(indent)
-      value = value(object)
+    def write_array(object)
+      write_array_start
+      value = value_for(object)
       last_index = value.size - 1
       value.each_with_index do |v, index|
-        write_indent(indent, output)
-        write_object(v, indent, pretty, output)
-        output << ',' unless index == last_index
-        output << "\n"
+        write_array_element(v, index == last_index)
       end
-      indent = pop_indent(indent)
-      write_indent(indent, output)
+      write_array_end
+    end
+
+    def write_array_start
+      output << "(\n"
+      indent = push_indent!
+    end
+
+    def write_array_end
+      indent = pop_indent!
+      write_indent
       output << ")"
     end
 
-    def write_dictionary(object, indent, pretty, output)
-      output << "{\n"
-      indent = push_indent(indent)
-      value = value(object)
+    def write_array_element(object, is_last_element)
+      write_indent
+      write_object(object)
+      output << ',' unless is_last_element
+      output << "\n"
+    end
+
+    def write_dictionary(object)
+      write_dictionary_start
+      value = value_for(object)
       value.each do |key, val|
-        write_indent(indent, output)
-        write_object(key, indent, pretty, output)
-        output << ' = '
-        write_object(value[key], indent, pretty, output)
-        output << ";"
-        output << "\n"
+        write_dictionary_key_value_pair(key, val)
       end
-      indent = pop_indent(indent)
-      write_indent(indent, output)
+      write_dictionary_end
+    end
+
+    def write_dictionary_start
+      output << "{\n"
+      indent = push_indent!
+    end
+
+    def write_dictionary_end
+      indent = pop_indent!
+      write_indent
       output << '}'
+    end
+
+    def write_dictionary_key_value_pair(key, value)
+      write_indent
+      write_object(key)
+      output << ' = '
+      write_object(value)
+      output << ";"
+      output << "\n"
     end
 
     def write_annotation(object, output)
@@ -84,7 +119,7 @@ module AsciiPlist
       output << " /*#{annotation}*/"
     end
 
-    def value(object)
+    def value_for(object)
       if object.is_a?(AsciiPlist::Object)
         object.value
       else
@@ -92,21 +127,19 @@ module AsciiPlist
       end
     end
 
-    def push_indent(level)
-      level + 1
+    def push_indent!
+      @indent += 1
     end
 
-    def pop_indent(level)
-      level -= 1
-      if level < 0
-        return 0
-      else
-        return level
+    def pop_indent!
+      @indent -= 1
+      if @indent < 0
+        @indent = 0
       end
     end
 
-    def write_indent(level, output)
-      output << "\t" * level
+    def write_indent
+      output << "\t" * indent
     end
   end
 end
