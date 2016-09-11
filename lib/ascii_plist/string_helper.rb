@@ -33,8 +33,21 @@ module AsciiPlist
       (ord == 13) || (ord == 10)
     end
 
-    def self.unquotify_substring(string, start_index, end_index)
-      unquotify_string(string[start_index..end_index])
+    QUOTE_MAP = {
+      "\a" => "\\a",
+      "\b" => "\\b",
+      "\f" => "\\f",
+      "\n" => "\\n",
+      "\r" => "\\r",
+      "\t" => "\\t",
+      "\v" => "\\v",
+      "\n" => "\\n",
+    }
+
+    QUOTE_REGEXP = Regexp.union(QUOTE_MAP.keys)
+
+    def self.quotify_string(string)
+      string.gsub(QUOTE_REGEXP) {|s| QUOTE_MAP[s] }
     end
 
     # Credit to Samantha Marshall

@@ -22,7 +22,7 @@ module AsciiPlist
 
       @plist
     rescue
-      warn "error at #{location}"
+      warn "error at #{location} #{@scanner.peek(25).inspect}"
       raise
     end
 

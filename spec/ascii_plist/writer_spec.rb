@@ -6,20 +6,29 @@ module AsciiPlist
     let(:plist) { Plist.new.tap {|p| p.root_object = root_object } }
     let(:pretty) { true }
     subject { Writer.new(plist).write(pretty) }
+    let(:utf8) { Writer::UTF8 }
 
     describe '#write_annotation' do
       context 'when there are annotations' do
         let(:root_object) { String.new('', 'this is a comment') }
         it "outputs them as multiline" do
-          expect(subject).to eq " /*this is a comment*/"
+          expect(subject).to eq "#{utf8} /*this is a comment*/\n"
         end
       end
 
       context 'when there are no annotations' do
-        let(:root_object) { String.new('', '') }
+        let(:root_object) { String.new('a', '') }
         it "does not write one" do
-          expect(subject).to eq ""
+          expect(subject).to eq "#{utf8}a\n"
         end
+      end
+    end
+
+    describe "writing normal ruby objects" do
+      let(:root_object) { {"key" => [{"a" => "a", "b" => ["c", "d"]}], "quoted" => "foo\n\t\\bar"} }
+
+      it "writes the output" do
+        expect(subject).to eq("#{utf8}{\n\tkey = (\n\t\t{\n\t\t\ta = a;\n\t\t\tb = (\n\t\t\t\tc,\n\t\t\t\td\n\t\t\t);\n\t\t}\n\t);\n\tquoted = \"foo\\n\\t\\bar\";\n}\n")
       end
     end
 
@@ -30,12 +39,12 @@ module AsciiPlist
         context "when not pretty" do
           let(:pretty) { false }
           it 'writes without the comment' do
-            expect(subject).to eq('Value')
+            expect(subject).to eq("#{utf8}Value\n")
           end
         end
 
         it 'writes a pretty value with the comment' do
-          expect(subject).to eq('Value /*A whimsical value*/')
+          expect(subject).to eq("#{utf8}Value /*A whimsical value*/\n")
         end
       end
     end
@@ -45,7 +54,7 @@ module AsciiPlist
         let(:root_object) { QuotedString.new('Value', 'A whimsical value') }
 
         it 'writes a pretty value with the comment' do
-          expect(subject).to eq('"Value" /*A whimsical value*/')
+          expect(subject).to eq(%(#{utf8}"Value" /*A whimsical value*/\n))
         end
       end
     end
@@ -63,7 +72,7 @@ module AsciiPlist
         end
 
         it 'writes a pretty value with the comment' do
-          expect(subject).to eq "(\n\tValues /*Comment*/,\n\t\"Can Be\" /*Another Comment*/,\n\tMixed,\n\tTypes\n) /*A whimsical value*/"
+          expect(subject).to eq "#{utf8}(\n\tValues /*Comment*/,\n\t\"Can Be\" /*Another Comment*/,\n\tMixed,\n\tTypes\n) /*A whimsical value*/\n"
         end
       end
     end
@@ -78,7 +87,7 @@ module AsciiPlist
         end
 
         it 'writes a pretty value with the comment' do
-          expect(subject).to eq "{\n\tABCDEFFEDCBA /*An Arbitrary Identifier*/ = {\n\t} /*Hmm*/;\n} /*A whimsical value*/"
+          expect(subject).to eq "#{utf8}{\n\tABCDEFFEDCBA /*An Arbitrary Identifier*/ = {\n\t} /*Hmm*/;\n} /*A whimsical value*/\n"
         end
       end
     end

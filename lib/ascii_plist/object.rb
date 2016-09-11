@@ -10,7 +10,12 @@ module AsciiPlist
     end
 
     def ==(object)
-      value == object.value && annotation == object.annotation
+      return unless object
+      if object.is_a?(self.class)
+        object.value == value && annotation == object.annotation
+      elsif object.is_a?(self.value.class)
+        object == value
+      end
     end
     alias eql? ==
 
@@ -19,7 +24,14 @@ module AsciiPlist
     end
 
     def <=>(object)
-      value <=> object.value
+      other_value = if object.is_a?(self.class)
+        object.value
+      elsif object.is_a?(self.value.class)
+        object
+      end
+      return unless other_value
+
+      value <=> other_value
     end
 
     def to_s
