@@ -15,7 +15,7 @@ module AsciiPlist
       if @objects_section
         @objects_section = false
       else
-        return super
+        return super(sort_dictionary(object))
       end
       write_dictionary_start
       value = value_for(object)
@@ -24,7 +24,9 @@ module AsciiPlist
         write_newline
         output << "/* Begin #{isa} section */"
         write_newline
-        sort_dictionary(kvs).each {|k, v| write_dictionary_key_value_pair(k, v) }
+        sort_dictionary(kvs).each do |k, v|
+          write_dictionary_key_value_pair(k, v)
+        end
         output << "/* End #{isa} section */"
         write_newline
       end
@@ -47,8 +49,10 @@ module AsciiPlist
         next comp if !comp.zero? && v1_isa
 
         key1 = value_for(k1)
+        key2 = value_for(k2)
         next -1 if key1 == 'isa'
-        key1 <=> value_for(k2)
+        next 1 if key2 == 'isa'
+        key1 <=> key2
       end
     end
 
