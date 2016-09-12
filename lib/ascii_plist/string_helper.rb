@@ -41,6 +41,8 @@ module AsciiPlist
       "\t" => "\\t",
       "\v" => "\\v",
       "\n" => "\\n",
+      %(') => "\\'",
+      %(") => '\\"',
     }
 
     QUOTE_REGEXP = Regexp.union(QUOTE_MAP.keys)

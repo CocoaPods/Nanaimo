@@ -76,7 +76,7 @@ module AsciiPlist
       unless string = @scanner.scan(/(?:([^#{quote}\\]|\\.)*)#{quote}/)
         raise "unterminated quoted string started at #{@scanner.pos}, expected #{quote} but never found it"
       end
-      string = StringHelper.unquotify_string(string.chomp(quote))
+      string = StringHelper.unquotify_string(string.chomp!(quote))
       AsciiPlist::QuotedString.new(string, nil)
     end
 
