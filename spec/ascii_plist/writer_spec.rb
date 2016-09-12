@@ -28,7 +28,7 @@ module AsciiPlist
       let(:root_object) { {"key" => [{"a" => "a", "b" => ["c", "d"]}], "quoted" => "foo\n\t\\bar"} }
 
       it "writes the output" do
-        expect(subject).to eq("#{utf8}{\n\tkey = (\n\t\t{\n\t\t\ta = a;\n\t\t\tb = (\n\t\t\t\tc,\n\t\t\t\td\n\t\t\t);\n\t\t}\n\t);\n\tquoted = \"foo\\n\\t\\bar\";\n}\n")
+        expect(subject).to eq("#{utf8}{\n\tkey = (\n\t\t{\n\t\t\ta = a;\n\t\t\tb = (\n\t\t\t\tc,\n\t\t\t\td,\n\t\t\t);\n\t\t},\n\t);\n\tquoted = \"foo\\n\\t\\bar\";\n}\n")
       end
     end
 
@@ -72,7 +72,7 @@ module AsciiPlist
         end
 
         it 'writes a pretty value with the comment' do
-          expect(subject).to eq "#{utf8}(\n\tValues /*Comment*/,\n\t\"Can Be\" /*Another Comment*/,\n\tMixed,\n\tTypes\n) /*A whimsical value*/\n"
+          expect(subject).to eq "#{utf8}(\n\tValues /*Comment*/,\n\t\"Can Be\" /*Another Comment*/,\n\tMixed,\n\tTypes,\n) /*A whimsical value*/\n"
         end
       end
     end

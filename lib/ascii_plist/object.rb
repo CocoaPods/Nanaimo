@@ -24,7 +24,7 @@ module AsciiPlist
     end
 
     def <=>(object)
-      other_value = if object.is_a?(self.class)
+      other_value = if object.is_a?(Object)
         object.value
       elsif object.is_a?(self.value.class)
         object

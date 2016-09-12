@@ -7,21 +7,30 @@ module AsciiPlist
       @pretty = pretty
       @output = output
       @indent = 0
+      @newlines = true
     end
 
     def write
       write_utf8
       write_object(@plist.root_object)
-      output << "\n"
+      write_newline
     end
 
-    attr_reader :indent, :pretty, :output
-    private :indent, :pretty, :output
+    attr_reader :indent, :pretty, :output, :newlines
+    private :indent, :pretty, :output, :newlines
 
     private
 
     def write_utf8
       output << UTF8
+    end
+
+    def write_newline
+      if newlines
+        output << "\n"
+      else
+        output << " "
+      end
     end
 
     def write_object(object)
@@ -39,7 +48,7 @@ module AsciiPlist
       else
         raise "Cannot write #{object} to an ascii plist"
       end
-      write_annotation(object, output) if pretty
+      write_annotation(object) if pretty
       output
     end
 
@@ -58,15 +67,15 @@ module AsciiPlist
     def write_array(object)
       write_array_start
       value = value_for(object)
-      last_index = value.size - 1
-      value.each_with_index do |v, index|
-        write_array_element(v, index == last_index)
+      value.each do |v|
+        write_array_element(v)
       end
       write_array_end
     end
 
     def write_array_start
-      output << "(\n"
+      output << "("
+      write_newline if newlines
       indent = push_indent!
     end
 
@@ -76,11 +85,11 @@ module AsciiPlist
       output << ")"
     end
 
-    def write_array_element(object, is_last_element)
+    def write_array_element(object)
       write_indent
       write_object(object)
-      output << ',' unless is_last_element
-      output << "\n"
+      output << ","
+      write_newline
     end
 
     def write_dictionary(object)
@@ -93,7 +102,8 @@ module AsciiPlist
     end
 
     def write_dictionary_start
-      output << "{\n"
+      output << "{"
+      write_newline if newlines
       indent = push_indent!
     end
 
@@ -109,10 +119,10 @@ module AsciiPlist
       output << ' = '
       write_object(value)
       output << ";"
-      output << "\n"
+      write_newline
     end
 
-    def write_annotation(object, output)
+    def write_annotation(object)
       return output unless object.is_a?(AsciiPlist::Object)
       annotation = object.annotation
       return output unless annotation && !annotation.empty?
@@ -139,7 +149,8 @@ module AsciiPlist
     end
 
     def write_indent
-      output << "\t" * indent
+      output << "\t" * indent if newlines
+      output
     end
   end
 end

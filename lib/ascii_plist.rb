@@ -6,4 +6,5 @@ module AsciiPlist
   require 'ascii_plist/reader'
   require 'ascii_plist/string_helper'
   require 'ascii_plist/writer'
+  require 'ascii_plist/xcode_project_writer'
 end
