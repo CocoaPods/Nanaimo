@@ -3,6 +3,13 @@ require 'ascii_plist/version'
 module AsciiPlist
   class Error < StandardError; end
 
+  DEBUG = !ENV['ASCII_PLIST_DEBUG'].nil?
+  private_constant :DEBUG
+  def self.debug
+    return unless DEBUG
+    warn yield
+  end
+
   require 'ascii_plist/object'
   require 'ascii_plist/plist'
   require 'ascii_plist/reader'

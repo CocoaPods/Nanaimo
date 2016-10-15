@@ -77,7 +77,7 @@ module AsciiPlist
         parse_string
       end.tap do |o|
         o.annotation = skip_to_non_space_matching_annotations
-        warn "parsed #{o.inspect} from #{start_pos}..#{@scanner.pos}" if ENV['ASCII_PLIST_DEBUG']
+        AsciiPlist.debug { "parsed #{o.inspect} from #{start_pos}..#{@scanner.pos}" }
       end
     end
 
