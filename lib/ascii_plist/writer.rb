@@ -3,8 +3,9 @@ module AsciiPlist
   # string representation.
   #
   class Writer
+    # The magic comment that denotes a UTF8-encoded plist.
+    #
     UTF8 = "// !$*UTF8*$!\n".freeze
-    private_constant :UTF8
 
     # @param plist [Plist,String,Hash,Array] The plist obejct to write
     # @param pretty [Boolean] Whether to serialize annotations and add
