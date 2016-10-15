@@ -4,6 +4,7 @@ inherit_from:
 AllCops:
   Exclude:
     - 'lib/ascii_plist/unicode/**/*.rb'
+    - 'vendor/**/*'
 
 Lint/AssignmentInCondition:
   Enabled: false
