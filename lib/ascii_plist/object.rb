@@ -1,6 +1,14 @@
 module AsciiPlist
+  # An object that belongs to a plist.
+  #
   class Object
-    attr_accessor :value, :annotation
+    # @return The underlying native Ruby value
+    #
+    attr_accessor :value
+
+    # @return [String] The annotation comment
+    #
+    attr_accessor :annotation
 
     def initialize(value, annotation)
       self.value = value
@@ -38,23 +46,31 @@ module AsciiPlist
       format('<%s %s>', self.class, value)
     end
 
+    # @return A native Ruby object representation
+    #
     def as_ruby
       raise 'unimplemented'
     end
   end
 
+  # A string object in a Plist.
+  #
   class String < Object
     def as_ruby
       value
     end
   end
 
+  # A string object surrounded by quotes in a Plist.
+  #
   class QuotedString < Object
     def as_ruby
       value
     end
   end
 
+  # A data object in a Plist, represented by a binary-encoded string.
+  #
   class Data < Object
     def initialize(value, annotation)
       value &&= value.force_encoding(Encoding::BINARY)
@@ -66,12 +82,16 @@ module AsciiPlist
     end
   end
 
+  # An array object in a Plist.
+  #
   class Array < Object
     def as_ruby
       value.map(&:as_ruby)
     end
   end
 
+  # A dictionary object in a Plist.
+  #
   class Dictionary < Object
     def as_ruby
       Hash[value.map { |k, v| [k.as_ruby, v.as_ruby] }]

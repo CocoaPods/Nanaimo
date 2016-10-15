@@ -1,7 +1,16 @@
 module AsciiPlist
+  # Transforms native ruby objects or Plist objects into their ASCII Plist
+  # string representation.
+  #
   class Writer
     UTF8 = "// !$*UTF8*$!\n".freeze
+    private_constant :UTF8
 
+    # @param plist [Plist,String,Hash,Array] The plist obejct to write
+    # @param pretty [Boolean] Whether to serialize annotations and add
+    #                         spaces and newlines to make output more legible
+    # @param output [#<<] The output stream to write the plist to
+    #
     def initialize(plist, pretty = true, output = ::String.new)
       @plist = plist
       @pretty = pretty
@@ -10,6 +19,8 @@ module AsciiPlist
       @newlines = true
     end
 
+    # Writes the plist to the given output.
+    #
     def write
       write_utf8
       write_object(@plist.root_object)

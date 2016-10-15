@@ -1,4 +1,6 @@
 module AsciiPlist
+  # A Plist.
+  #
   class Plist
     # @return [AsciiPlist::Object] The root level object in the plist.
     #
@@ -22,6 +24,8 @@ module AsciiPlist
       root_object.hash
     end
 
+    # @return A native Ruby object representation of the plist.
+    #
     def as_ruby
       root_object.as_ruby
     end

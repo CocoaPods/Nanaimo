@@ -1,8 +1,15 @@
 # frozen-string-literal: true
 module AsciiPlist
+  # Transforms plist strings into Plist objects.
+  #
   class Reader
+    # Raised when attempting to read a plist with an unsupported file format.
+    #
     class UnsupportedPlistFormatError < Error
+      # @return [Symbol] The unsupported format.
+      #
       attr_reader :format
+
       def initialize(format)
         @format = format
       end
@@ -12,13 +19,23 @@ module AsciiPlist
       end
     end
 
+    # Raised when parsing fails.
+    #
     class ParseError < Error
+      # @return [[Integer, Integer]] The (line, column) offset into the plist
+      #         where the error occurred
+      #
       attr_accessor :location
+
+      # @return [String] The contents of the plist.
+      #
       attr_accessor :plist_string
     end
 
-    attr_accessor :plist
-
+    # @param plist_contents [String]
+    #
+    # @return [Symbol] The file format of the plist in the given string.
+    #
     def self.plist_type(plist_contents)
       case plist_contents
       when /\Abplist/
@@ -30,14 +47,24 @@ module AsciiPlist
       end
     end
 
+    # @param file_path [String]
+    #
+    # @return [Plist] A parsed plist from the given file
+    #
     def self.from_file(file_path)
       new(File.read(file_path))
     end
 
+    # @param contents [String] The plist to be parsed
+    #
     def initialize(contents)
       @scanner = StringScanner.new(contents)
     end
 
+    # Parses the contents of the plist
+    #
+    # @return [Plist] The parsed Plist object.
+    #
     def parse!
       plist_format = ensure_ascii_plist!
       read_string_encoding
@@ -53,7 +80,7 @@ module AsciiPlist
 
     def ensure_ascii_plist!
       self.class.plist_type(@scanner.string).tap do |plist_format|
-        raise UnsupportedPlistFormatError.new(plist_format) unless plist_format == :ascii
+        raise UnsupportedPlistFormatError, plist_format unless plist_format == :ascii
       end
     end
 

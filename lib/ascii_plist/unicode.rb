@@ -2,6 +2,8 @@
 require 'ascii_plist/unicode/next_step_mapping'
 require 'ascii_plist/unicode/quote_maps'
 module AsciiPlist
+  # @!visibility private
+  #
   module Unicode
     class UnsupportedEscapeSequenceError < Error; end
     class InvalidEscapeSequenceError < Error; end

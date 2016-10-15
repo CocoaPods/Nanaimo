@@ -1,6 +1,10 @@
 module AsciiPlist
+  # Transforms native ruby objects or Plist objects into their ASCII Plist
+  # string representation, formatted as Xcode writes Xcode projects.
+  #
   class XcodeProjectWriter < Writer
     ISA = String.new('isa', '')
+    private_constant :ISA
 
     def initialize(*)
       super

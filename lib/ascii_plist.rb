@@ -1,5 +1,7 @@
 require 'ascii_plist/version'
 
+# A native Ruby implementation of ASCII plist parsing and serialization.
+#
 module AsciiPlist
   class Error < StandardError; end
 
