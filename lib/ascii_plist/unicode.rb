@@ -1,6 +1,6 @@
 # frozen-string-literal: true
-require "ascii_plist/unicode/next_step_mapping"
-require "ascii_plist/unicode/quote_maps"
+require 'ascii_plist/unicode/next_step_mapping'
+require 'ascii_plist/unicode/quote_maps'
 module AsciiPlist
   module Unicode
     class UnsupportedEscapeSequenceError < Error; end
@@ -9,7 +9,7 @@ module AsciiPlist
     module_function
 
     def quotify_string(string)
-      string.gsub(QUOTE_REGEXP) {|s| QUOTE_MAP[s] }
+      string.gsub(QUOTE_REGEXP) { |s| QUOTE_MAP[s] }
     end
 
     ESCAPE_PREFIXES = %W(
@@ -29,15 +29,15 @@ module AsciiPlist
       string_length = string.size
       index = 0
       while index < string_length
-        if escape_index = extracted_string.index("\\", index)
-          formatted_string << extracted_string[index..escape_index-1] unless index == escape_index
+        if escape_index = extracted_string.index('\\', index)
+          formatted_string << extracted_string[index..escape_index - 1] unless index == escape_index
           index = escape_index + 1
           next_char = extracted_string[index]
           if ESCAPE_PREFIXES.include?(next_char)
             index += 1
             if unquoted = UNQUOTE_MAP[next_char]
               formatted_string << unquoted
-            elsif next_char == "U"
+            elsif next_char == 'U'
               length = 4
               unicode_numbers = extracted_string[index, length]
               unless unicode_numbers =~ /\A\h{4}\z/
@@ -53,7 +53,7 @@ module AsciiPlist
                 unless code_point <= 0x80 || converted = NEXT_STEP_MAPPING[code_point]
                   raise InvalidEscapeSequenceError, "Invalid octal escape sequence #{octal_string}"
                 end
-                formatted_string << [converted].pack("U")
+                formatted_string << [converted].pack('U')
               else
                 formatted_string << next_char
               end

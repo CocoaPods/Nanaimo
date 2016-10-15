@@ -64,12 +64,12 @@ module AsciiPlist
     def parse_object
       _comment = skip_to_non_space_matching_annotations
       start_pos = @scanner.pos
-      raise_parser_error ParseError, "Unexpected eos while parsing" if @scanner.eos?
-      if @scanner.skip /\{/
+      raise_parser_error ParseError, 'Unexpected eos while parsing' if @scanner.eos?
+      if @scanner.skip(/\{/)
         parse_dictionary
-      elsif @scanner.skip /\(/
+      elsif @scanner.skip(/\(/)
         parse_array
-      elsif @scanner.skip /</
+      elsif @scanner.skip(/</)
         parse_data
       elsif quote = @scanner.scan(/['"]/)
         parse_quotedstring(quote)
@@ -77,13 +77,13 @@ module AsciiPlist
         parse_string
       end.tap do |o|
         o.annotation = skip_to_non_space_matching_annotations
-        warn "parsed #{o.inspect} from #{start_pos}..#{@scanner.pos}" if ENV["ASCII_PLIST_DEBUG"]
+        warn "parsed #{o.inspect} from #{start_pos}..#{@scanner.pos}" if ENV['ASCII_PLIST_DEBUG']
       end
     end
 
     def parse_string
       eat_whitespace!
-      unless match = @scanner.scan(/[\w\/.]+/)
+      unless match = @scanner.scan(%r{[\w/.]+})
         raise_parser_error ParseError, "not a valid string at index #{@scanner.pos} (char is #{current_character.inspect})"
       end
       AsciiPlist::String.new(match, nil)
@@ -99,7 +99,7 @@ module AsciiPlist
 
     def parse_array
       objects = []
-      while !@scanner.eos?
+      until @scanner.eos?
         eat_whitespace!
         break if @scanner.skip(/\)/)
 
@@ -117,7 +117,7 @@ module AsciiPlist
 
     def parse_dictionary
       objects = {}
-      while !@scanner.eos?
+      until @scanner.eos?
         skip_to_non_space_matching_annotations
         break if @scanner.skip(/}/)
 
@@ -145,12 +145,12 @@ module AsciiPlist
         raise_parser_error ParseError, "Data missing closing '>'"
       end
       data.chomp!('>')
-      data.delete!(" ")
-      unless data.size % 2 == 0
+      data.delete!(' ')
+      unless data.size.even?
         @scanner.unscan
-        raise_parser_error ParseError, "Data has an uneven number of hex digits"
+        raise_parser_error ParseError, 'Data has an uneven number of hex digits'
       end
-      data = [data].pack("H*")
+      data = [data].pack('H*')
       AsciiPlist::Data.new(data, nil)
     end
 
@@ -166,10 +166,10 @@ module AsciiPlist
     end
 
     def eat_whitespace!
-      @scanner.skip MANY_WHITESPACES
+      @scanner.skip(MANY_WHITESPACES)
     end
 
-    NEWLINE_CHARACTERS = %W(\x0A \x0D \u2028 \u2029)
+    NEWLINE_CHARACTERS = %W(\x0A \x0D \u2028 \u2029).freeze
     NEWLINE = Regexp.union(*NEWLINE_CHARACTERS)
 
     WHITESPACE_CHARACTERS = NEWLINE_CHARACTERS + %W(\x09 \x0B \x0C \x20)
@@ -178,24 +178,24 @@ module AsciiPlist
     MANY_WHITESPACES = /#{WHITESPACE}+/
 
     def read_multiline_comment
-      unless annotation = @scanner.scan(/(?:.+?)(?=\*\/)/m)
+      unless annotation = @scanner.scan(%r{(?:.+?)(?=\*/)}m)
         raise_parser_error ParseError, "#{@scanner.rest.inspect} failed to terminate multiline comment"
       end
-      @scanner.skip(/\*\//)
+      @scanner.skip(%r{\*/})
 
       annotation
     end
 
     def skip_to_non_space_matching_annotations
       annotation = ''.freeze
-      while !@scanner.eos?
+      until @scanner.eos?
         eat_whitespace!
 
         # Comment Detection
-        if @scanner.skip(/\/\//)
+        if @scanner.skip(%r{//})
           annotation = read_singleline_comment
           next
-        elsif @scanner.skip(/\/\*/)
+        elsif @scanner.skip(%r{/\*})
           annotation = read_multiline_comment
           next
         end

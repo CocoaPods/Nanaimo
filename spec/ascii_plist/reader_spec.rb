@@ -53,11 +53,11 @@ module AsciiPlist
 
       it 'should read the annotations correctly' do
         expect(subject).to eq AsciiPlist::Dictionary.new({
-          AsciiPlist::String.new('a', 'annotation') =>
-           AsciiPlist::Array.new([
-             AsciiPlist::String.new('b', 'another annotation')
-           ], '')
-        }, '')
+                                                           AsciiPlist::String.new('a', 'annotation') =>
+                                                            AsciiPlist::Array.new([
+                                                                                    AsciiPlist::String.new('b', 'another annotation')
+                                                                                  ], '')
+                                                         }, '')
       end
     end
 
@@ -88,7 +88,7 @@ module AsciiPlist
           expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, ''), :ascii)
         end
 
-        context "and there are newlines" do
+        context 'and there are newlines' do
           let(:string) { "\t\n\t{\n\t\n}" }
 
           it 'parses correctly' do
@@ -109,7 +109,7 @@ module AsciiPlist
     end
 
     describe 'data' do
-      let(:data) { "<0001 aB AB Cf 99 7 c >" }
+      let(:data) { '<0001 aB AB Cf 99 7 c >' }
       let(:reader) { Reader.new("{key = #{data}}") }
       subject { reader.parse!.root_object }
 
@@ -117,11 +117,11 @@ module AsciiPlist
         expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', '') => AsciiPlist::Data.new("\x00\x01\xab\xab\xcf\x99\x7c", '') }, '')
       end
 
-      context "with an odd number of hex digits" do
-        let(:data) { "<12 3>" }
+      context 'with an odd number of hex digits' do
+        let(:data) { '<12 3>' }
 
         it 'raises an informative error' do
-          expect { subject }.to raise_error(Reader::ParseError, "Data has an uneven number of hex digits")
+          expect { subject }.to raise_error(Reader::ParseError, 'Data has an uneven number of hex digits')
         end
       end
     end

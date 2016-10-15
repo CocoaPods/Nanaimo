@@ -3,7 +3,7 @@ require 'spec_helper'
 module AsciiPlist
   describe Writer do
     let(:root_object) { nil }
-    let(:plist) { Plist.new.tap {|p| p.root_object = root_object } }
+    let(:plist) { Plist.new.tap { |p| p.root_object = root_object } }
     let(:pretty) { true }
     subject { Writer.new(plist, pretty).write }
     let(:utf8) { Writer::UTF8 }
@@ -11,23 +11,23 @@ module AsciiPlist
     describe '#write_annotation' do
       context 'when there are annotations' do
         let(:root_object) { String.new('', 'this is a comment') }
-        it "outputs them as multiline" do
+        it 'outputs them as multiline' do
           expect(subject).to eq "#{utf8} /*this is a comment*/\n"
         end
       end
 
       context 'when there are no annotations' do
         let(:root_object) { String.new('a', '') }
-        it "does not write one" do
+        it 'does not write one' do
           expect(subject).to eq "#{utf8}a\n"
         end
       end
     end
 
-    describe "writing normal ruby objects" do
-      let(:root_object) { {"key" => [{"a" => "a", "b" => ["c", "d"]}], "quoted" => "foo\n\t\\bar"} }
+    describe 'writing normal ruby objects' do
+      let(:root_object) { { 'key' => [{ 'a' => 'a', 'b' => %w(c d) }], 'quoted' => "foo\n\t\\bar" } }
 
-      it "writes the output" do
+      it 'writes the output' do
         expect(subject).to eq("#{utf8}{\n\tkey = (\n\t\t{\n\t\t\ta = a;\n\t\t\tb = (\n\t\t\t\tc,\n\t\t\t\td,\n\t\t\t);\n\t\t},\n\t);\n\tquoted = \"foo\\n\\t\\bar\";\n}\n")
       end
     end
@@ -36,7 +36,7 @@ module AsciiPlist
       describe 'in general' do
         let(:root_object) { String.new('Value', 'A whimsical value') }
 
-        context "when not pretty" do
+        context 'when not pretty' do
           let(:pretty) { false }
           it 'writes without the comment' do
             expect(subject).to eq("#{utf8}Value\n")

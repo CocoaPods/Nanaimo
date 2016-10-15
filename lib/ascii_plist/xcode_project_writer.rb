@@ -4,7 +4,7 @@ module AsciiPlist
 
     def initialize(*)
       super
-      @objects_section = nil
+      @objects_section = false
     end
 
     private
@@ -12,14 +12,11 @@ module AsciiPlist
     def write_dictionary(object)
       n = newlines
       @newlines = false if flat_dictionary?(object)
-      if @objects_section
-        @objects_section = false
-      else
-        return super(sort_dictionary(object))
-      end
+      return super(sort_dictionary(object)) unless @objects_section
+      @objects_section = false
       write_dictionary_start
       value = value_for(object)
-      objects_by_isa = value.group_by {|k, v| isa_for(v) }
+      objects_by_isa = value.group_by { |_k, v| isa_for(v) }
       objects_by_isa.each do |isa, kvs|
         write_newline
         output << "/* Begin #{isa} section */"

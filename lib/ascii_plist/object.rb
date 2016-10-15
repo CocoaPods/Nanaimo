@@ -9,12 +9,12 @@ module AsciiPlist
       raise 'Item cannot be initialize with a nil value' if value.nil?
     end
 
-    def ==(object)
-      return unless object
-      if object.is_a?(self.class)
-        object.value == value && annotation == object.annotation
-      elsif object.is_a?(self.value.class)
-        object == value
+    def ==(other)
+      return unless other
+      if other.is_a?(self.class)
+        other.value == value && annotation == other.annotation
+      elsif other.is_a?(value.class)
+        other == value
       end
     end
     alias eql? ==
@@ -23,23 +23,23 @@ module AsciiPlist
       value.hash
     end
 
-    def <=>(object)
-      other_value = if object.is_a?(Object)
-        object.value
-      elsif object.is_a?(self.value.class)
-        object
-      end
+    def <=>(other)
+      other_value = if other.is_a?(Object)
+                      other.value
+                    elsif other.is_a?(value.class)
+                      other
+                    end
       return unless other_value
 
       value <=> other_value
     end
 
     def to_s
-      format('<%s %s>', self.class, self.value)
+      format('<%s %s>', self.class, value)
     end
 
     def as_ruby
-      raise "unimplemented"
+      raise 'unimplemented'
     end
   end
 
@@ -74,7 +74,7 @@ module AsciiPlist
 
   class Dictionary < Object
     def as_ruby
-      Hash[value.map {|k, v| [k.as_ruby, v.as_ruby] }]
+      Hash[value.map { |k, v| [k.as_ruby, v.as_ruby] }]
     end
   end
 end

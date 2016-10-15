@@ -26,11 +26,11 @@ module AsciiPlist
     end
 
     def write_newline
-      if newlines
-        output << "\n"
-      else
-        output << " "
-      end
+      output << if newlines
+                  "\n"
+                else
+                  ' '
+                end
     end
 
     def write_object(object)
@@ -39,7 +39,7 @@ module AsciiPlist
         write_array(object)
       when Dictionary, ::Hash
         write_dictionary(object)
-      when /[^\w\.\/]/, QuotedString, ""
+      when %r{[^\w\./]}, QuotedString, ''
         write_quoted_string(object)
       when String, ::String
         write_string(object)
@@ -62,13 +62,9 @@ module AsciiPlist
 
     def write_data(object)
       output << '<'
-      value_for(object).unpack("H*").first.chars.each_with_index do |c, i|
-        if i > 0 && i % 16 == 0
-          output << "\n"
-        end
-        if i > 0 && i % 4 == 0
-          output << " "
-        end
+      value_for(object).unpack('H*').first.chars.each_with_index do |c, i|
+        output << "\n" if i > 0 && (i % 16).zero?
+        output << ' ' if i > 0 && (i % 4).zero?
         output << c
       end
       output << '>'
@@ -84,21 +80,21 @@ module AsciiPlist
     end
 
     def write_array_start
-      output << "("
+      output << '('
       write_newline if newlines
-      indent = push_indent!
+      push_indent!
     end
 
     def write_array_end
-      indent = pop_indent!
+      pop_indent!
       write_indent
-      output << ")"
+      output << ')'
     end
 
     def write_array_element(object)
       write_indent
       write_object(object)
-      output << ","
+      output << ','
       write_newline
     end
 
@@ -112,13 +108,13 @@ module AsciiPlist
     end
 
     def write_dictionary_start
-      output << "{"
+      output << '{'
       write_newline if newlines
-      indent = push_indent!
+      push_indent!
     end
 
     def write_dictionary_end
-      indent = pop_indent!
+      pop_indent!
       write_indent
       output << '}'
     end
@@ -128,7 +124,7 @@ module AsciiPlist
       write_object(key)
       output << ' = '
       write_object(value)
-      output << ";"
+      output << ';'
       write_newline
     end
 
@@ -153,9 +149,7 @@ module AsciiPlist
 
     def pop_indent!
       @indent -= 1
-      if @indent < 0
-        @indent = 0
-      end
+      @indent = 0 if @indent < 0
     end
 
     def write_indent
