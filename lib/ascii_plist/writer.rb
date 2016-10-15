@@ -62,11 +62,15 @@ module AsciiPlist
 
     def write_data(object)
       output << '<'
-      output << value_for(object).unpack("H*").first.chars.each_slice(4).map do |s|
-        s.join
-      end.each_slice(4).map do |s|
-        s.join(" ")
-      end.join("\n ")
+      value_for(object).unpack("H*").first.chars.each_with_index do |c, i|
+        if i > 0 && i % 16 == 0
+          output << "\n"
+        end
+        if i > 0 && i % 4 == 0
+          output << " "
+        end
+        output << c
+      end
       output << '>'
     end
 

@@ -94,10 +94,11 @@ module AsciiPlist
 
     describe Data do
       describe 'in general' do
-        let(:root_object) { Data.new("\x00\x01\x02\x03\x04\x05\x06\x07\x08", '') }
+        let(:root_object) { Data.new('A'.upto('z').to_a.join, 'Data!') }
 
         it 'writes a pretty value with the comment' do
-          expect(subject).to eq "#{utf8}<0001 0203 0405 0607\n 08>\n"
+          serialized_data = "<4142 4344 4546 4748\n 494a 4b4c 4d4e 4f50\n 5152 5354 5556 5758\n 595a 5b5c 5d5e 5f60\n 6162 6364 6566 6768\n 696a 6b6c 6d6e 6f70\n 7172 7374 7576 7778\n 797a>"
+          expect(subject).to eq "#{utf8}#{serialized_data} /*Data!*/\n"
         end
       end
     end
