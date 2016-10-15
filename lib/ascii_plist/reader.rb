@@ -1,7 +1,34 @@
 # frozen-string-literal: true
 module AsciiPlist
   class Reader
+    class UnsupportedPlistFormatError < Error
+      attr_reader :format
+      def initialize(format)
+        @format = format
+      end
+
+      def to_s
+        "#{format} plists are currently unsupported"
+      end
+    end
+
+    class ParseError < Error
+      attr_accessor :location
+      attr_accessor :plist_string
+    end
+
     attr_accessor :plist
+
+    def self.plist_type(plist_contents)
+      case plist_contents
+      when /\Abplist/
+        :binary
+      when /\A<\?xml/
+        :xml
+      else
+        :ascii
+      end
+    end
 
     def self.from_file(file_path)
       new(File.read(file_path))
@@ -12,31 +39,25 @@ module AsciiPlist
     end
 
     def parse!
-      @plist = AsciiPlist::Plist.new
-      ensure_ascii_plist!
+      plist_format = ensure_ascii_plist!
       read_string_encoding
-      plist.root_object = parse_object
+      root_object = parse_object
 
       eat_whitespace!
-      raise "unrecognized characters #{@scanner.rest.inspect} after parsing" unless @scanner.eos?
+      raise_parser_error ParseError, "unrecognized characters #{@scanner.rest.inspect} after parsing" unless @scanner.eos?
 
-      @plist
-    rescue
-      warn "error at #{location} #{@scanner.peek(25).inspect}"
+      AsciiPlist::Plist.new(root_object, plist_format)
+    rescue ParseError => e
+      e.location = location
+      e.plist_string = @scanner.string
       raise
     end
 
     private
 
     def ensure_ascii_plist!
-      if @scanner.scan /bplist/
-        plist.file_type = 'binary'
-        raise 'Binary plists are currently  unsupported.'
-      elsif @scanner.match? /<\?xml/
-        plist.file_type = 'xml'
-        raise 'XML plists are currently unsupported.'
-      else
-        plist.file_type = 'ascii'
+      self.class.plist_type(@scanner.string).tap do |plist_format|
+        raise UnsupportedPlistFormatError(plist_format) unless plist_format == :ascii
       end
     end
 
@@ -47,7 +68,7 @@ module AsciiPlist
     def parse_object
       _comment = skip_to_non_space_matching_annotations
       start_pos = @scanner.pos
-      raise "Unexpected eos while parsing" if @scanner.eos?
+      raise_parser_error ParseError, "Unexpected eos while parsing" if @scanner.eos?
       if @scanner.skip /\{/
         parse_dictionary
       elsif @scanner.skip /\(/
@@ -67,16 +88,16 @@ module AsciiPlist
     def parse_string
       eat_whitespace!
       unless match = @scanner.scan(/[\w\/.]+/)
-        raise "not a valid string at index #{@scanner.pos} (char is #{current_character.inspect})"
+        raise_parser_error ParseError, "not a valid string at index #{@scanner.pos} (char is #{current_character.inspect})"
       end
       AsciiPlist::String.new(match, nil)
     end
 
     def parse_quotedstring(quote)
       unless string = @scanner.scan(/(?:([^#{quote}\\]|\\.)*)#{quote}/)
-        raise "unterminated quoted string started at #{@scanner.pos}, expected #{quote} but never found it"
+        raise_parser_error ParseError, "unterminated quoted string started at #{@scanner.pos}, expected #{quote} but never found it"
       end
-      string = StringHelper.unquotify_string(string.chomp!(quote))
+      string = Unicode.unquotify_string(string.chomp!(quote))
       AsciiPlist::QuotedString.new(string, nil)
     end
 
@@ -91,7 +112,7 @@ module AsciiPlist
         eat_whitespace!
         break if @scanner.skip(/\)/)
         unless @scanner.skip(/,/)
-          raise "Array #{objects} missing ',' in between objects"
+          raise_parser_error ParseError, "Array #{objects} missing ',' in between objects"
         end
       end
 
@@ -107,7 +128,7 @@ module AsciiPlist
         key = parse_object
         eat_whitespace!
         unless @scanner.skip(/=/)
-          raise "Dictionary missing value after key #{key.inspect} at index #{@scanner.pos}, expected '=' and got #{current_character.inspect}"
+          raise_parser_error ParseError, "Dictionary missing value after key #{key.inspect} at index #{@scanner.pos}, expected '=' and got #{current_character.inspect}"
         end
 
         value = parse_object
@@ -116,7 +137,7 @@ module AsciiPlist
         eat_whitespace!
         break if @scanner.skip(/}/)
         unless @scanner.skip(/;/)
-          raise "Dictionary (#{objects}) missing ';' after key-value pair (#{key} = #{value}) at index #{@scanner.pos} (got #{current_character})"
+          raise_parser_error ParseError, "Dictionary (#{objects}) missing ';' after key-value pair (#{key} = #{value}) at index #{@scanner.pos} (got #{current_character})"
         end
       end
 
@@ -124,7 +145,7 @@ module AsciiPlist
     end
 
     def parse_data
-      raise "Data is not yet supported"
+      raise_parser_error ParseError, "Data is not yet supported"
     end
 
     def current_character
@@ -133,24 +154,26 @@ module AsciiPlist
 
     def read_singleline_comment
       unless comment = @scanner.scan_until(NEWLINE)
-        raise("failed to terminate single line comment #{@scanner.rest.inspect}")
+        raise_parser_error ParseError, "failed to terminate single line comment #{@scanner.rest.inspect}"
       end
       comment
     end
 
     def eat_whitespace!
-      @scanner.skip MANY_WHITESPACE
+      @scanner.skip MANY_WHITESPACES
     end
 
-    _NEWLINE = %W(\x0A \x0D \u2028 \u2029)
-    NEWLINE = Regexp.union(*_NEWLINE)
-    _WHITESPACE = _NEWLINE + %W(\x09 \x0B \x0C \x20)
-    WHITESPACE = Regexp.union(*_WHITESPACE)
-    MANY_WHITESPACE = /#{WHITESPACE}+/
+    NEWLINE_CHARACTERS = %W(\x0A \x0D \u2028 \u2029)
+    NEWLINE = Regexp.union(*NEWLINE_CHARACTERS)
+
+    WHITESPACE_CHARACTERS = NEWLINE_CHARACTERS + %W(\x09 \x0B \x0C \x20)
+    WHITESPACE = Regexp.union(*WHITESPACE_CHARACTERS)
+
+    MANY_WHITESPACES = /#{WHITESPACE}+/
 
     def read_multiline_comment
       unless annotation = @scanner.scan(/(?:.+?)(?=\*\/)/m)
-        raise "#{@scanner.rest.inspect} failed to terminate multiline comment"
+        raise_parser_error ParseError, "#{@scanner.rest.inspect} failed to terminate multiline comment"
       end
       @scanner.skip(/\*\//)
 
@@ -158,7 +181,7 @@ module AsciiPlist
     end
 
     def skip_to_non_space_matching_annotations
-      annotation = ''
+      annotation = ''.freeze
       while !@scanner.eos?
         eat_whitespace!
 
@@ -171,7 +194,6 @@ module AsciiPlist
           next
         end
 
-        # Eat Whitespace
         eat_whitespace!
 
         break
@@ -179,11 +201,18 @@ module AsciiPlist
       annotation
     end
 
-    def location
-      pos = @scanner.charpos
-      line = @scanner.string[0..@scanner.pos].scan(NEWLINE).size + 1
-      column = pos - (@scanner.string.rindex(NEWLINE, pos - 1) || -1)
+    def location_in(scanner)
+      pos = scanner.charpos
+      line = scanner.string[0..scanner.charpos].scan(NEWLINE).size + 1
+      column = pos - (scanner.string.rindex(NEWLINE, pos - 1) || -1)
       [line, column]
+    end
+
+    def raise_parser_error(klass, message)
+      raise klass.new(message).tap do |error|
+        error.location = location_in(@scanner)
+        error.plist_string = @scanner.string
+      end
     end
   end
 end

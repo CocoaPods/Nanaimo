@@ -57,7 +57,7 @@ module AsciiPlist
     end
 
     def write_quoted_string(object)
-      output << '"' << StringHelper.quotify_string(value_for(object)) << '"'
+      output << '"' << Unicode.quotify_string(value_for(object)) << '"'
     end
 
     def write_data(object)

@@ -85,21 +85,21 @@ module AsciiPlist
         let(:string) { '{}' }
 
         it 'parses correctly' do
-          expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, ''), 'ascii')
+          expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, ''), :ascii)
         end
 
         context "and there are newlines" do
           let(:string) { "\t\n\t{\n\t\n}" }
 
           it 'parses correctly' do
-            expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, ''), 'ascii')
+            expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, ''), :ascii)
           end
         end
       end
     end
 
     describe 'quoted strings' do
-      let(:quoted_string) { %("\\"${ABC}\\"\\n\\t\\U3232\\U0095\\U3232\p\\\\") }
+      let(:quoted_string) { %("\\"${ABC}\\"\\n\\t\\U0CA0_\u0ca0\p\\\\") }
       let(:reader) { Reader.new("{key = #{quoted_string}}") }
       subject { reader.parse!.root_object }
 
