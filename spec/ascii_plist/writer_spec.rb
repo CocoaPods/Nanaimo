@@ -91,5 +91,15 @@ module AsciiPlist
         end
       end
     end
+
+    describe Data do
+      describe 'in general' do
+        let(:root_object) { Data.new("\x00\x01\x02\x03\x04\x05\x06\x07\x08", '') }
+
+        it 'writes a pretty value with the comment' do
+          expect(subject).to eq "#{utf8}<0001 0203 0405 0607\n 08>\n"
+        end
+      end
+    end
   end
 end

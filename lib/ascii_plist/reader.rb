@@ -47,10 +47,6 @@ module AsciiPlist
       raise_parser_error ParseError, "unrecognized characters #{@scanner.rest.inspect} after parsing" unless @scanner.eos?
 
       AsciiPlist::Plist.new(root_object, plist_format)
-    rescue ParseError => e
-      e.location = location
-      e.plist_string = @scanner.string
-      raise
     end
 
     private
@@ -145,7 +141,17 @@ module AsciiPlist
     end
 
     def parse_data
-      raise_parser_error ParseError, "Data is not yet supported"
+      unless data = @scanner.scan(/[\h ]*>/)
+        raise_parser_error ParseError, "Data missing closing '>'"
+      end
+      data.chomp!('>')
+      data.delete!(" ")
+      unless data.size % 2 == 0
+        @scanner.unscan
+        raise_parser_error ParseError, "Data has an uneven number of hex digits"
+      end
+      data = [data].pack("H*")
+      AsciiPlist::Data.new(data, nil)
     end
 
     def current_character
@@ -209,10 +215,11 @@ module AsciiPlist
     end
 
     def raise_parser_error(klass, message)
-      raise klass.new(message).tap do |error|
+      exception = klass.new(message).tap do |error|
         error.location = location_in(@scanner)
         error.plist_string = @scanner.string
       end
+      raise(exception)
     end
   end
 end

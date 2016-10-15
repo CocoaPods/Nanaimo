@@ -56,6 +56,14 @@ module AsciiPlist
   end
 
   class Data < Object
+    def initialize(value, annotation)
+      value &&= value.force_encoding(Encoding::BINARY)
+      super(value, annotation)
+    end
+
+    def as_ruby
+      value
+    end
   end
 
   class Array < Object

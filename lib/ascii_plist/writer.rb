@@ -61,7 +61,13 @@ module AsciiPlist
     end
 
     def write_data(object)
-      raise "write_data unimplemented"
+      output << '<'
+      output << value_for(object).unpack("H*").first.chars.each_slice(4).map do |s|
+        s.join
+      end.each_slice(4).map do |s|
+        s.join(" ")
+      end.join("\n ")
+      output << '>'
     end
 
     def write_array(object)

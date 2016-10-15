@@ -107,5 +107,23 @@ module AsciiPlist
         expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', '') => AsciiPlist::QuotedString.new(%("${ABC}"\n\tಠ_ಠp\\), '') }, '')
       end
     end
+
+    describe 'data' do
+      let(:data) { "<0001 aB AB Cf 99 7 c >" }
+      let(:reader) { Reader.new("{key = #{data}}") }
+      subject { reader.parse!.root_object }
+
+      it 'parses' do
+        expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', '') => AsciiPlist::Data.new("\x00\x01\xab\xab\xcf\x99\x7c", '') }, '')
+      end
+
+      context "with an odd number of hex digits" do
+        let(:data) { "<12 3>" }
+
+        it 'raises an informative error' do
+          expect { subject }.to raise_error(Reader::ParseError, "Data has an uneven number of hex digits")
+        end
+      end
+    end
   end
 end
