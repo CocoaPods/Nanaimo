@@ -53,7 +53,7 @@ module AsciiPlist
 
     def ensure_ascii_plist!
       self.class.plist_type(@scanner.string).tap do |plist_format|
-        raise UnsupportedPlistFormatError(plist_format) unless plist_format == :ascii
+        raise UnsupportedPlistFormatError.new(plist_format) unless plist_format == :ascii
       end
     end
 
