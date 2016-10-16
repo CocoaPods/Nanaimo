@@ -73,5 +73,9 @@ module AsciiPlist
       end
       formatted_string
     end
+
+    def xml_escape_string(string)
+      REXML::Text.normalize(string)
+    end
   end
 end
