@@ -3,6 +3,8 @@ module AsciiPlist
   # string representation.
   #
   class Writer
+    autoload :XMLWriter, 'ascii_plist/writer/xml'
+
     # The magic comment that denotes a UTF8-encoded plist.
     #
     UTF8 = "// !$*UTF8*$!\n".freeze
@@ -53,7 +55,7 @@ module AsciiPlist
         write_dictionary(object)
       when %r{[^\w\./]}, QuotedString, ''
         write_quoted_string(object)
-      when String, ::String
+      when String, ::String, Symbol
         write_string(object)
       when Data
         write_data(object)
