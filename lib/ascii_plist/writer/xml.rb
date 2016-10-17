@@ -1,5 +1,3 @@
-require 'rexml/text'
-
 module AsciiPlist
   class Writer
     # Transforms native ruby objects or Plist objects into their XML Plist

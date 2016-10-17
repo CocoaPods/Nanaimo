@@ -34,6 +34,17 @@ module AsciiPlist
           expect(subject).to eq xml_plist('<string>Value</string>')
         end
       end
+
+      describe 'escaping' do
+        let(:root_object) { %(This\nis a \t string 'that ' "contains" wacky & <weird &> char><><&acters) }
+
+        it 'writes a properly escaped value' do
+          expect(subject).to eq xml_plist(<<-XML.strip)
+<string>This
+is a \t string 'that ' "contains" wacky &amp; &lt;weird &amp;&gt; char&gt;&lt;&gt;&lt;&amp;acters</string>
+          XML
+        end
+      end
     end
 
     describe QuotedString do

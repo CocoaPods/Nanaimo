@@ -74,8 +74,15 @@ module AsciiPlist
       formatted_string
     end
 
+    XML_STRING_ESCAPES = {
+      '&' => '&amp;',
+      '<' => '&lt;',
+      '>' => '&gt;'
+    }.freeze
+    XML_STRING_ESCAPE_REGEXP = Regexp.union(XML_STRING_ESCAPES.keys)
+
     def xml_escape_string(string)
-      REXML::Text.normalize(string)
+      string.gsub(XML_STRING_ESCAPE_REGEXP) { |m| XML_STRING_ESCAPES[m] }
     end
   end
 end
