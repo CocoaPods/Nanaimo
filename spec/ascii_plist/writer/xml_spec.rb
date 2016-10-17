@@ -26,6 +26,22 @@ module AsciiPlist
       end
     end
 
+    describe 'writing booleans' do
+      let(:root_object) { [true, false] }
+
+      it 'writes booleans' do
+        expect(subject).to eq xml_plist("<array>\n\t<true/>\n\t<false/>\n</array>")
+      end
+    end
+
+    describe 'writing numbers' do
+      let(:root_object) { [1, 3.14] }
+
+      it 'writes numbers as the proper types' do
+        expect(subject).to eq xml_plist("<array>\n\t<integer>1</integer>\n\t<real>3.14</real>\n</array>")
+      end
+    end
+
     describe String do
       describe 'in general' do
         let(:root_object) { String.new('Value', 'A whimsical value') }
