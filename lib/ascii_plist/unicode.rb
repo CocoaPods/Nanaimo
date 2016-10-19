@@ -82,7 +82,7 @@ module AsciiPlist
     XML_STRING_ESCAPE_REGEXP = Regexp.union(XML_STRING_ESCAPES.keys)
 
     def xml_escape_string(string)
-      string.gsub(XML_STRING_ESCAPE_REGEXP) { |m| XML_STRING_ESCAPES[m] }
+      string.to_s.gsub(XML_STRING_ESCAPE_REGEXP) { |m| XML_STRING_ESCAPES[m] }
     end
   end
 end
