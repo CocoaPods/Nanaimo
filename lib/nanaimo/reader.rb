@@ -66,7 +66,7 @@ module Nanaimo
     # @return [Plist] The parsed Plist object.
     #
     def parse!
-      plist_format = ensure_nanaimo!
+      plist_format = ensure_ascii_plist!
       read_string_encoding
       root_object = parse_object
 
@@ -78,7 +78,7 @@ module Nanaimo
 
     private
 
-    def ensure_nanaimo!
+    def ensure_ascii_plist!
       self.class.plist_type(@scanner.string).tap do |plist_format|
         raise UnsupportedPlistFormatError, plist_format unless plist_format == :ascii
       end
