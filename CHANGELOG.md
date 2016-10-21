@@ -4,5 +4,5 @@
 
 ##### Enhancements
 
-* Initial implementation.
+* Initial implementation.  
   [Samuel Giddins](https://github.com/segiddins)
