@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['dan@tomlinson.io', 'segiddins@segiddins.me']
 
   spec.summary       = 'A library for (de)serialization of ASCII Plists.'
-  spec.homepage      = 'https://github.com/dantoml/nanaimo'
+  spec.homepage      = 'https://github.com/CocoaPods/Nanaimo'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }

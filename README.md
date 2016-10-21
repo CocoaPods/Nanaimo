@@ -1,8 +1,9 @@
 # Nanaimo
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/nanaimo`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Nanaimo is a simple library that implements ASCII Plist serialization and
+deserialization, entirely with native Ruby code (and zero dependencies). It
+also comes with out-of-the-box support for serializing Xcode projects (complete
+with annotations) and XML plists.
 
 ## Installation
 
@@ -22,7 +23,21 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'nanaimo'
+
+# parse a native ruby object from an ascii plist file
+project_hash = Nanaimo::Reader
+  .from_file("App.xcodeproj/project.pbxproj")
+  .parse!
+  .as_ruby
+
+# change that object
+project_hash['...'] = '...'
+
+# re-serialize it
+ascii_plist_string = Nanaimo::Writer.new(project_hash).write
+```
 
 ## Development
 
@@ -38,4 +53,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
