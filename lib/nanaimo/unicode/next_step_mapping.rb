@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 module Nanaimo
   module Unicode
     # Taken from http://ftp.unicode.org/Public/MAPPINGS/VENDORS/NEXT/NEXTSTEP.TXT

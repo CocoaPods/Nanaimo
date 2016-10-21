@@ -14,10 +14,20 @@ task :generate_nextstep_mappings do
                       .lines
                       .grep(/^[^#$]/)
                       .map { |l| l.split("\t", 3) }
-                      .reduce("module Nanaimo\n  module Unicode\n    # Taken from #{url}\n    NEXT_STEP_MAPPING = {\n") do |f, (ns, uc, cm)|
+                      .reduce('') do |f, (ns, uc, cm)|
     f << "      #{ns} => #{uc}, #{cm}"
-  end << "    }.freeze\n  end\nend\n"
-  File.open('lib/nanaimo/unicode/next_step_mapping.rb', 'w') { |f| f << mappings }
+  end
+  map = <<-RUBY
+# frozen-string-literal: true
+module Nanaimo
+  module Unicode
+    # Taken from #{url}
+    NEXT_STEP_MAPPING = {
+#{mappings}    }.freeze
+  end
+end
+  RUBY
+  File.open('lib/nanaimo/unicode/next_step_mapping.rb', 'w') { |f| f << map }
 end
 
 task :generate_quote_maps do
@@ -46,6 +56,7 @@ task :generate_quote_maps do
   end
 
   map = <<-RUBY
+# frozen-string-literal: true
 module Nanaimo
   module Unicode
     QUOTE_MAP = #{dump_hash[quote_map]}

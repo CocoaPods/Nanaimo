@@ -1,3 +1,4 @@
+# frozen-string-literal: true
 module Nanaimo
   module Unicode
     QUOTE_MAP = {
