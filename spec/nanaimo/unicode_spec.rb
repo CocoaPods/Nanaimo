@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module AsciiPlist
+module Nanaimo
   describe Unicode do
     cases = {
       # Unquoted => [Quoted]

@@ -1,5 +1,5 @@
 # frozen-string-literal: true
-module AsciiPlist
+module Nanaimo
   # Transforms plist strings into Plist objects.
   #
   class Reader
@@ -66,19 +66,19 @@ module AsciiPlist
     # @return [Plist] The parsed Plist object.
     #
     def parse!
-      plist_format = ensure_ascii_plist!
+      plist_format = ensure_nanaimo!
       read_string_encoding
       root_object = parse_object
 
       eat_whitespace!
       raise_parser_error ParseError, "unrecognized characters #{@scanner.rest.inspect} after parsing" unless @scanner.eos?
 
-      AsciiPlist::Plist.new(root_object, plist_format)
+      Nanaimo::Plist.new(root_object, plist_format)
     end
 
     private
 
-    def ensure_ascii_plist!
+    def ensure_nanaimo!
       self.class.plist_type(@scanner.string).tap do |plist_format|
         raise UnsupportedPlistFormatError, plist_format unless plist_format == :ascii
       end
@@ -104,7 +104,7 @@ module AsciiPlist
         parse_string
       end.tap do |o|
         o.annotation = skip_to_non_space_matching_annotations
-        AsciiPlist.debug { "parsed #{o.inspect} from #{start_pos}..#{@scanner.pos}" }
+        Nanaimo.debug { "parsed #{o.inspect} from #{start_pos}..#{@scanner.pos}" }
       end
     end
 
@@ -113,7 +113,7 @@ module AsciiPlist
       unless match = @scanner.scan(%r{[\w/.]+})
         raise_parser_error ParseError, "not a valid string at index #{@scanner.pos} (char is #{current_character.inspect})"
       end
-      AsciiPlist::String.new(match, nil)
+      Nanaimo::String.new(match, nil)
     end
 
     def parse_quotedstring(quote)
@@ -121,7 +121,7 @@ module AsciiPlist
         raise_parser_error ParseError, "unterminated quoted string started at #{@scanner.pos}, expected #{quote} but never found it"
       end
       string = Unicode.unquotify_string(string.chomp!(quote))
-      AsciiPlist::QuotedString.new(string, nil)
+      Nanaimo::QuotedString.new(string, nil)
     end
 
     def parse_array
@@ -139,7 +139,7 @@ module AsciiPlist
         end
       end
 
-      AsciiPlist::Array.new(objects, nil)
+      Nanaimo::Array.new(objects, nil)
     end
 
     def parse_dictionary
@@ -164,7 +164,7 @@ module AsciiPlist
         end
       end
 
-      AsciiPlist::Dictionary.new(objects, nil)
+      Nanaimo::Dictionary.new(objects, nil)
     end
 
     def parse_data
@@ -178,7 +178,7 @@ module AsciiPlist
         raise_parser_error ParseError, 'Data has an uneven number of hex digits'
       end
       data = [data].pack('H*')
-      AsciiPlist::Data.new(data, nil)
+      Nanaimo::Data.new(data, nil)
     end
 
     def current_character

@@ -1,4 +1,4 @@
-module AsciiPlist
+module Nanaimo
   # Transforms native ruby objects or Plist objects into their ASCII Plist
   # string representation, formatted as Xcode writes Xcode projects.
   #

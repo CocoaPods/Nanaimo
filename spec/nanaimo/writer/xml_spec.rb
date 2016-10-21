@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module AsciiPlist
+module Nanaimo
   describe Writer::XMLWriter do
     let(:root_object) { nil }
     let(:plist) { Plist.new.tap { |p| p.root_object = root_object } }

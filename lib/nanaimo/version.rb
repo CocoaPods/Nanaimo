@@ -1,3 +1,3 @@
-module AsciiPlist
+module Nanaimo
   VERSION = '0.1.0'.freeze
 end

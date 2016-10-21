@@ -1,4 +1,4 @@
-module AsciiPlist
+module Nanaimo
   # An object that belongs to a plist.
   #
   class Object

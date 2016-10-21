@@ -1,4 +1,4 @@
-# ASCII Plist Changelog
+# Nanaimo Changelog
 
 ## Master
 

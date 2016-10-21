@@ -1,7 +1,7 @@
 # frozen-string-literal: true
-require 'ascii_plist/unicode/next_step_mapping'
-require 'ascii_plist/unicode/quote_maps'
-module AsciiPlist
+require 'nanaimo/unicode/next_step_mapping'
+require 'nanaimo/unicode/quote_maps'
+module Nanaimo
   # @!visibility private
   #
   module Unicode

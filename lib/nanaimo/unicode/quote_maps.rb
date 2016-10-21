@@ -1,4 +1,4 @@
-module AsciiPlist
+module Nanaimo
   module Unicode
     QUOTE_MAP = {
       "\a" => "\\a",

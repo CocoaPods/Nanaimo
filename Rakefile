@@ -14,10 +14,10 @@ task :generate_nextstep_mappings do
                       .lines
                       .grep(/^[^#$]/)
                       .map { |l| l.split("\t", 3) }
-                      .reduce("module AsciiPlist\n  module Unicode\n    # Taken from #{url}\n    NEXT_STEP_MAPPING = {\n") do |f, (ns, uc, cm)|
+                      .reduce("module Nanaimo\n  module Unicode\n    # Taken from #{url}\n    NEXT_STEP_MAPPING = {\n") do |f, (ns, uc, cm)|
     f << "      #{ns} => #{uc}, #{cm}"
   end << "    }.freeze\n  end\nend\n"
-  File.open('lib/ascii_plist/unicode/next_step_mapping.rb', 'w') { |f| f << mappings }
+  File.open('lib/nanaimo/unicode/next_step_mapping.rb', 'w') { |f| f << mappings }
 end
 
 task :generate_quote_maps do
@@ -46,7 +46,7 @@ task :generate_quote_maps do
   end
 
   map = <<-RUBY
-module AsciiPlist
+module Nanaimo
   module Unicode
     QUOTE_MAP = #{dump_hash[quote_map]}
 
@@ -57,5 +57,5 @@ module AsciiPlist
 end
   RUBY
 
-  File.open('lib/ascii_plist/unicode/quote_maps.rb', 'w') { |f| f << map }
+  File.open('lib/nanaimo/unicode/quote_maps.rb', 'w') { |f| f << map }
 end

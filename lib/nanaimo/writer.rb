@@ -1,9 +1,9 @@
-module AsciiPlist
+module Nanaimo
   # Transforms native ruby objects or Plist objects into their ASCII Plist
   # string representation.
   #
   class Writer
-    autoload :XMLWriter, 'ascii_plist/writer/xml'
+    autoload :XMLWriter, 'nanaimo/writer/xml'
 
     # The magic comment that denotes a UTF8-encoded plist.
     #
@@ -143,14 +143,14 @@ module AsciiPlist
     end
 
     def write_annotation(object)
-      return output unless object.is_a?(AsciiPlist::Object)
+      return output unless object.is_a?(Nanaimo::Object)
       annotation = object.annotation
       return output unless annotation && !annotation.empty?
       output << " /*#{annotation}*/"
     end
 
     def value_for(object)
-      if object.is_a?(AsciiPlist::Object)
+      if object.is_a?(Nanaimo::Object)
         object.value
       else
         object

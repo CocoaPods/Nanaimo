@@ -1,4 +1,4 @@
-module AsciiPlist
+module Nanaimo
   class Writer
     # Transforms native ruby objects or Plist objects into their XML Plist
     # string representation.

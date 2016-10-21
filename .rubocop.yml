@@ -3,7 +3,7 @@ inherit_from:
 
 AllCops:
   Exclude:
-    - 'lib/ascii_plist/unicode/**/*.rb'
+    - 'lib/nanaimo/unicode/**/*.rb'
     - 'vendor/**/*'
 
 Lint/AssignmentInCondition:

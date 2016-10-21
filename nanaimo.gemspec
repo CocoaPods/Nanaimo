@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'ascii_plist/version'
+require 'nanaimo/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'ascii_plist'
-  spec.version       = AsciiPlist::VERSION
+  spec.name          = 'nanaimo'
+  spec.version       = Nanaimo::VERSION
   spec.authors       = ['Danielle Tomlinson', 'Samuel Giddins']
   spec.email         = ['dan@tomlinson.io', 'segiddins@segiddins.me']
 
   spec.summary       = 'A library for (de)serialization of ASCII Plists.'
-  spec.homepage      = 'https://github.com/dantoml/ascii_plist'
+  spec.homepage      = 'https://github.com/dantoml/nanaimo'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }

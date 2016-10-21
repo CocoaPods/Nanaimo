@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in ascii_plist.gemspec
+# Specify your gem's dependencies in nanaimo.gemspec
 gemspec
 
 group :development do

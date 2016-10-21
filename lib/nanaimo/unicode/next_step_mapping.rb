@@ -1,4 +1,4 @@
-module AsciiPlist
+module Nanaimo
   module Unicode
     # Taken from http://ftp.unicode.org/Public/MAPPINGS/VENDORS/NEXT/NEXTSTEP.TXT
     NEXT_STEP_MAPPING = {

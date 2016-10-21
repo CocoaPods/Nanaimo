@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module AsciiPlist
+module Nanaimo
   describe Reader do
     describe 'Arrays' do
       describe 'that are emtpy' do
@@ -13,8 +13,8 @@ module AsciiPlist
           expect(@result).to be_a Plist
         end
 
-        it 'should have a AsciiPlist::Array as the root_object' do
-          expect(@result.root_object).to be_a AsciiPlist::Array
+        it 'should have a Nanaimo::Array as the root_object' do
+          expect(@result.root_object).to be_a Nanaimo::Array
         end
 
         it 'should have no values' do
@@ -32,8 +32,8 @@ module AsciiPlist
           expect(@result).to be_a Plist
         end
 
-        it 'should have a AsciiPlist::Array as the root_object' do
-          expect(@result.root_object).to be_a AsciiPlist::Array
+        it 'should have a Nanaimo::Array as the root_object' do
+          expect(@result.root_object).to be_a Nanaimo::Array
         end
 
         it 'should have two values' do
@@ -52,12 +52,12 @@ module AsciiPlist
       subject { reader.parse!.root_object }
 
       it 'should read the annotations correctly' do
-        expect(subject).to eq AsciiPlist::Dictionary.new({
-                                                           AsciiPlist::String.new('a', 'annotation') =>
-                                                            AsciiPlist::Array.new([
-                                                                                    AsciiPlist::String.new('b', 'another annotation')
-                                                                                  ], '')
-                                                         }, '')
+        expect(subject).to eq Nanaimo::Dictionary.new({
+                                                        Nanaimo::String.new('a', 'annotation') =>
+                                                         Nanaimo::Array.new([
+                                                                              Nanaimo::String.new('b', 'another annotation')
+                                                                            ], '')
+                                                      }, '')
       end
     end
 
@@ -73,8 +73,8 @@ module AsciiPlist
         expect(@result).to be_a Plist
       end
 
-      it 'should have a AsciiPlist::Dictionary as the root_object' do
-        expect(@result.root_object).to be_a AsciiPlist::Dictionary
+      it 'should have a Nanaimo::Dictionary as the root_object' do
+        expect(@result.root_object).to be_a Nanaimo::Dictionary
       end
 
       it 'should have four keys' do
@@ -85,14 +85,14 @@ module AsciiPlist
         let(:string) { '{}' }
 
         it 'parses correctly' do
-          expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, ''), :ascii)
+          expect(@result).to eq Plist.new(Nanaimo::Dictionary.new({}, ''), :ascii)
         end
 
         context 'and there are newlines' do
           let(:string) { "\t\n\t{\n\t\n}" }
 
           it 'parses correctly' do
-            expect(@result).to eq Plist.new(AsciiPlist::Dictionary.new({}, ''), :ascii)
+            expect(@result).to eq Plist.new(Nanaimo::Dictionary.new({}, ''), :ascii)
           end
         end
       end
@@ -104,7 +104,7 @@ module AsciiPlist
       subject { reader.parse!.root_object }
 
       it 'parses' do
-        expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', '') => AsciiPlist::QuotedString.new(%("${ABC}"\n\tಠ_ಠp\\), '') }, '')
+        expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::QuotedString.new(%("${ABC}"\n\tಠ_ಠp\\), '') }, '')
       end
     end
 
@@ -114,7 +114,7 @@ module AsciiPlist
       subject { reader.parse!.root_object }
 
       it 'parses' do
-        expect(subject).to eq AsciiPlist::Dictionary.new({ AsciiPlist::String.new('key', '') => AsciiPlist::Data.new("\x00\x01\xab\xab\xcf\x99\x7c", '') }, '')
+        expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::Data.new("\x00\x01\xab\xab\xcf\x99\x7c", '') }, '')
       end
 
       context 'with an odd number of hex digits' do

@@ -1,8 +1,8 @@
-module AsciiPlist
+module Nanaimo
   # A Plist.
   #
   class Plist
-    # @return [AsciiPlist::Object] The root level object in the plist.
+    # @return [Nanaimo::Object] The root level object in the plist.
     #
     attr_accessor :root_object
 
@@ -16,7 +16,7 @@ module AsciiPlist
     end
 
     def ==(other)
-      return unless other.is_a?(AsciiPlist::Plist)
+      return unless other.is_a?(Nanaimo::Plist)
       file_type == other.file_type && root_object == other.root_object
     end
 
