@@ -8,7 +8,9 @@
 
 ##### Bug Fixes
 
-* None.  
+* Ensure all required classes are required before being used.  
+  [Samuel Giddins](https://github.com/segiddins)
+  [Xcodeproj#435](https://github.com/CocoaPods/Xcodeproj/issues/435)
 
 
 ## 0.1.0 (2016-10-21)

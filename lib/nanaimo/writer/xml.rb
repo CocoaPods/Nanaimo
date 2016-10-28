@@ -5,6 +5,8 @@ module Nanaimo
     #
     class XMLWriter < Writer
       autoload :Base64, 'base64'
+      autoload :Date, 'date'
+      autoload :DateTime, 'date'
 
       def write
         write_xml_header
