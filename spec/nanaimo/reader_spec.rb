@@ -147,7 +147,13 @@ module Nanaimo
         let(:data) { '<12 3>' }
 
         it 'raises an informative error' do
-          expect { subject }.to raise_error(Reader::ParseError, 'Data has an uneven number of hex digits')
+          expect { subject }.to raise_error(Reader::ParseError, <<-E)
+[!] Data has an uneven number of hex digits
+ #  -------------------------------------------
+ >  {key = <12 3>}
+            ^
+ #  -------------------------------------------
+          E
         end
       end
     end

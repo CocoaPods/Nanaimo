@@ -32,6 +32,29 @@ module Nanaimo
       # @return [String] The contents of the plist.
       #
       attr_accessor :plist_string
+
+      def to_s
+        "[!] #{super}#{context}"
+      end
+
+      def context
+        line_number, column = location
+        line_number -= 1
+        lines = plist_string.split(NEWLINE)
+
+        indent     = ' #  '
+        indicator  = indent.tr('#', '>')
+        first_line = line_number.zero?
+        last_line  = line_number == (lines.count - 1)
+
+        m =  ::String.new("\n")
+        m << "#{indent}-------------------------------------------\n"
+        m << "#{indent}#{lines[line_number - 1]}\n" unless first_line
+        m << "#{indicator}#{lines[line_number]}\n"
+        m << ' ' * (column + 3) << "^\n"
+        m << "#{indent}#{lines[line_number + 1]}\n" unless last_line
+        m << "#{indent}-------------------------------------------\n"
+      end
     end
 
     # @param plist_contents [String]
