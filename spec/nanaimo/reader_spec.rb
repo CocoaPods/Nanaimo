@@ -98,6 +98,24 @@ module Nanaimo
       end
     end
 
+    describe 'unquoted strings' do
+      let(:unquoted_string) { 'TEST' }
+      let(:reader) { Reader.new("{key = #{unquoted_string}}") }
+      subject { reader.parse!.root_object }
+
+      it 'are parsed correctly' do
+        expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::String.new('TEST', '') }, '')
+      end
+
+      describe 'that start with $' do
+        let(:unquoted_string) { '$PROJECT_DIR/mogenerator/mogenerator' }
+
+        it 'are parsed correctly' do
+          expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::String.new('$PROJECT_DIR/mogenerator/mogenerator', '') }, '')
+        end
+      end
+    end
+
     describe 'quoted strings' do
       let(:quoted_string) { %("\\"${ABC}\\"\\n\\t\\U0CA0_\u0ca0\p\\\\") }
       let(:reader) { Reader.new("{key = #{quoted_string}}") }

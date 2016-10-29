@@ -8,7 +8,9 @@
 
 ##### Bug Fixes
 
-* None.  
+* Add support for unquoted strings that contain a `$`.  
+  [Danielle Tomlinson](https://github.com/dantoml)
+  [CocoaPods#6101](https://github.com/CocoaPods/CocoaPods/issues/6101) 
 
 
 ## 0.1.1 (2016-10-28)
