@@ -112,7 +112,7 @@ module Nanaimo
 
     def parse_string
       eat_whitespace!
-      unless match = @scanner.scan(%r{[\w/.]+})
+      unless match = @scanner.scan(%r{[\w/.$]+})
         raise_parser_error ParseError, "not a valid string at index #{@scanner.pos} (char is #{current_character.inspect})"
       end
       Nanaimo::String.new(match, nil)
