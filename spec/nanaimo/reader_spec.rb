@@ -114,6 +114,14 @@ module Nanaimo
           expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::String.new('$PROJECT_DIR/mogenerator/mogenerator', '') }, '')
         end
       end
+
+      describe 'that contain `-`' do
+        let(:unquoted_string) { 'foo/bar-baz' }
+
+        it 'are parsed correctly' do
+          expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::String.new('foo/bar-baz', '') }, '')
+        end
+      end
     end
 
     describe 'quoted strings' do

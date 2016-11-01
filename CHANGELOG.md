@@ -8,7 +8,9 @@
 
 ##### Bug Fixes
 
-* None.  
+* Allow reading unquoted strings that contain `-`.  
+  [Samuel Giddins](https://github.com/segiddins)
+  [Xcodeproj#438](https://github.com/CocoaPods/Xcodeproj/issues/438)
 
 
 ## 0.1.3 (2016-11-01)
