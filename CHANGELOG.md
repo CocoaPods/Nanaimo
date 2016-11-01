@@ -8,7 +8,9 @@
 
 ##### Bug Fixes
 
-* None.  
+* Fix unquoting a sequence of backslashes.  
+  [Samuel Giddins](https://github.com/segiddins)
+  [CocoaPods#6108](https://github.com/CocoaPods/CocoaPods/issues/6108)
 
 
 ## 0.1.2 (2016-10-29)
@@ -21,7 +23,7 @@
 
 * Add support for unquoted strings that contain a `$`.  
   [Danielle Tomlinson](https://github.com/dantoml)
-  [CocoaPods#6101](https://github.com/CocoaPods/CocoaPods/issues/6101) 
+  [CocoaPods#6101](https://github.com/CocoaPods/CocoaPods/issues/6101)
 
 
 ## 0.1.1 (2016-10-28)
