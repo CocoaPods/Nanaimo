@@ -114,14 +114,6 @@ module Nanaimo
           expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::String.new('$PROJECT_DIR/mogenerator/mogenerator', '') }, '')
         end
       end
-
-      describe 'that contain `-`' do
-        let(:unquoted_string) { 'foo/bar-baz' }
-
-        it 'are parsed correctly' do
-          expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::String.new('foo/bar-baz', '') }, '')
-        end
-      end
     end
 
     describe 'quoted strings' do
@@ -150,12 +142,210 @@ module Nanaimo
           expect { subject }.to raise_error(Reader::ParseError, <<-E)
 [!] Data has an uneven number of hex digits
  #  -------------------------------------------
- >  {key = <12 3>}
+1>  {key = <12 3>}
             ^
  #  -------------------------------------------
           E
         end
       end
+    end
+
+    describe 'parse errors' do
+      shared_examples_for 'parse errors' do |name, plist, expected_error|
+        it "raises an informative error #{name}" do
+          if expected_error.is_a?(::String)
+            prefix = expected_error.scan(/^[ \t]*(?=\S)/).min
+            expected_error.gsub!(/^#{prefix}/, '')
+          end
+
+          expect { Reader.new(plist).parse! }
+            .to raise_error(Reader::ParseError) do |e|
+              if e.is_a?(Regexp)
+                expect(e.to_s).to match(expected_error)
+              else
+                expect(e.to_s).to eq(expected_error)
+              end
+            end
+        end
+      end
+
+      include_examples 'parse errors',
+                       'with a dictionary without an `=`',
+                       '{ a = ; }',
+                       <<-E
+          [!] Invalid character ";" in unquoted string
+           #  -------------------------------------------
+          1>  { a = ; }
+                    ^
+           #  -------------------------------------------
+        E
+
+      include_examples 'parse errors',
+                       'with an unterminated array',
+                       <<-PLIST,
+          (
+            a,
+            b,
+            (
+              c
+            )
+        PLIST
+                       <<-E
+          [!] Array missing ',' in between objects
+           #  -------------------------------------------
+           #                c
+           #              )
+          7>\s\s
+              ^
+           #  -------------------------------------------
+        E
+
+      include_examples 'parse errors',
+                       'with an error in the middle of the plist',
+                       <<-PLIST,
+(
+  #{"a,\n" * 1000}
+  c,
+  d,
+  e,,,
+  f,
+  g,
+  #{"z,\n" * 250}
+  zz
+)
+          PLIST
+                       <<-E
+            [!] Invalid character "," in unquoted string
+                #  -------------------------------------------
+                #    c,
+                #    d,
+            1005>    e,,,
+                       ^
+                #    f,
+                #    g,
+                #  -------------------------------------------
+          E
+
+      include_examples 'parse errors',
+                       'with an array missing a comma between elements',
+                       <<-PLIST,
+ (
+   a,
+   b,
+   (
+     c
+     d
+   )
+ )
+                           PLIST
+                       <<-E
+[!] Array missing ',' in between objects
+ #  -------------------------------------------
+ #     (
+ #       c
+6>       d
+         ^
+ #     )
+ #   )
+ #  -------------------------------------------
+                           E
+
+      include_examples 'parse errors',
+                       'with an unterminated dictionary',
+                       <<-PLIST,
+{
+  a = e;
+  b = j;
+  d = (
+    c
+  );
+                        PLIST
+                       <<-E
+[!] Unexpected end of string while parsing
+ #  -------------------------------------------
+ #      c
+ #    );
+7>\s\s
+    ^
+ #  -------------------------------------------
+                        E
+
+      include_examples 'parse errors',
+                       'with an unterminated dictionary pair',
+                       <<-PLIST,
+{
+  a = e;
+  b = j;
+  d = (
+    c
+  )
+                         PLIST
+                       <<-E
+[!] Dictionary missing ';' after key-value pair for "d", found ""
+ #  -------------------------------------------
+ #      c
+ #    )
+7>\s\s
+    ^
+ #  -------------------------------------------
+                         E
+
+      include_examples 'parse errors',
+                       'with a dictionary without an `=`',
+                       '{a}',
+                       <<-E
+[!] Dictionary missing value for key "a", expected '=' and found "}"
+ #  -------------------------------------------
+1>  {a}
+      ^
+ #  -------------------------------------------
+                         E
+
+      include_examples 'parse errors',
+                       'with a dictionary without a value',
+                       '{ a = ; }',
+                       <<-E
+[!] Invalid character ";" in unquoted string
+ #  -------------------------------------------
+1>  { a = ; }
+          ^
+ #  -------------------------------------------
+                         E
+
+      include_examples 'parse errors',
+                       'with an unterminated quoted string',
+                       "{\na = 'bcd\n}",
+                       <<-E
+[!] Unterminated quoted string, expected ' but never found it
+ #  -------------------------------------------
+ #  {
+2>  a = 'bcd
+         ^
+ #  }
+ #  -------------------------------------------
+                         E
+
+      include_examples 'parse errors',
+                       'with non-whitespace after the root object',
+                       'abcd a',
+                       <<-E
+[!] Found additional characters after parsing the root plist object
+ #  -------------------------------------------
+1>  abcd a
+         ^
+ #  -------------------------------------------
+                         E
+
+      include_examples 'parse errors',
+                       'when a data is unterminated',
+                       '<1234',
+                       <<-E
+[!] Data missing closing '>'
+ #  -------------------------------------------
+1>  <1234
+     ^
+ #  -------------------------------------------
+                         E
     end
   end
 end

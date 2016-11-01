@@ -37,22 +37,25 @@ module Nanaimo
         "[!] #{super}#{context}"
       end
 
-      def context
+      def context(n = 2)
         line_number, column = location
         line_number -= 1
         lines = plist_string.split(NEWLINE)
 
-        indent     = ' #  '
-        indicator  = indent.tr('#', '>')
-        first_line = line_number.zero?
-        last_line  = line_number == (lines.count - 1)
+        s = line_number.succ.to_s.size
+        indent     = "#{' ' * s}#  "
+        indicator  = "#{line_number.succ}>  "
 
         m =  ::String.new("\n")
         m << "#{indent}-------------------------------------------\n"
-        m << "#{indent}#{lines[line_number - 1]}\n" unless first_line
+        m << lines[[line_number - n, 0].max...line_number].map do |l|
+          "#{indent}#{l}\n"
+        end.join
         m << "#{indicator}#{lines[line_number]}\n"
-        m << ' ' * (column + 3) << "^\n"
-        m << "#{indent}#{lines[line_number + 1]}\n" unless last_line
+        m << ' ' * (column + s + 2) << "^\n"
+        m << Array(lines[line_number.succ..[lines.count.pred, line_number + n].min]).map do |l|
+          l.strip.empty? ? '' : "#{indent}#{l}\n"
+        end.join
         m << "#{indent}-------------------------------------------\n"
       end
     end
@@ -96,7 +99,7 @@ module Nanaimo
       root_object = parse_object
 
       eat_whitespace!
-      raise_parser_error ParseError, "unrecognized characters #{@scanner.rest.inspect} after parsing" unless @scanner.eos?
+      raise_parser_error ParseError, 'Found additional characters after parsing the root plist object' unless @scanner.eos?
 
       Nanaimo::Plist.new(root_object, plist_format)
     end
@@ -116,7 +119,7 @@ module Nanaimo
     def parse_object
       _comment = skip_to_non_space_matching_annotations
       start_pos = @scanner.pos
-      raise_parser_error ParseError, 'Unexpected eos while parsing' if @scanner.eos?
+      raise_parser_error ParseError, 'Unexpected end of string while parsing' if @scanner.eos?
       if @scanner.skip(/\{/)
         parse_dictionary
       elsif @scanner.skip(/\(/)
@@ -135,15 +138,15 @@ module Nanaimo
 
     def parse_string
       eat_whitespace!
-      unless match = @scanner.scan(%r{[\w/.$-]+}o)
-        raise_parser_error ParseError, "not a valid string at index #{@scanner.pos} (char is #{current_character.inspect})"
+      unless match = @scanner.scan(%r{[\w/.$]+})
+        raise_parser_error ParseError, "Invalid character #{current_character.inspect} in unquoted string"
       end
       Nanaimo::String.new(match, nil)
     end
 
     def parse_quotedstring(quote)
       unless string = @scanner.scan(/(?:([^#{quote}\\]|\\.)*)#{quote}/)
-        raise_parser_error ParseError, "unterminated quoted string started at #{@scanner.pos}, expected #{quote} but never found it"
+        raise_parser_error ParseError, "Unterminated quoted string, expected #{quote} but never found it"
       end
       string = Unicode.unquotify_string(string.chomp!(quote))
       Nanaimo::QuotedString.new(string, nil)
@@ -160,7 +163,7 @@ module Nanaimo
         eat_whitespace!
         break if @scanner.skip(/\)/)
         unless @scanner.skip(/,/)
-          raise_parser_error ParseError, "Array #{objects} missing ',' in between objects"
+          raise_parser_error ParseError, "Array missing ',' in between objects"
         end
       end
 
@@ -176,7 +179,7 @@ module Nanaimo
         key = parse_object
         eat_whitespace!
         unless @scanner.skip(/=/)
-          raise_parser_error ParseError, "Dictionary missing value after key #{key.inspect} at index #{@scanner.pos}, expected '=' and got #{current_character.inspect}"
+          raise_parser_error ParseError, "Dictionary missing value for key #{key.as_ruby.inspect}, expected '=' and found #{current_character.inspect}"
         end
 
         value = parse_object
@@ -185,7 +188,7 @@ module Nanaimo
         eat_whitespace!
         break if @scanner.skip(/}/)
         unless @scanner.skip(/;/)
-          raise_parser_error ParseError, "Dictionary (#{objects}) missing ';' after key-value pair (#{key} = #{value}) at index #{@scanner.pos} (got #{current_character})"
+          raise_parser_error ParseError, "Dictionary missing ';' after key-value pair for #{key.as_ruby.inspect}, found #{current_character.inspect}"
         end
       end
 
@@ -212,7 +215,7 @@ module Nanaimo
 
     def read_singleline_comment
       unless comment = @scanner.scan_until(NEWLINE)
-        raise_parser_error ParseError, "failed to terminate single line comment #{@scanner.rest.inspect}"
+        raise_parser_error ParseError, 'Failed to terminate single line comment'
       end
       comment
     end
@@ -231,7 +234,7 @@ module Nanaimo
 
     def read_multiline_comment
       unless annotation = @scanner.scan(%r{(?:.+?)(?=\*/)}m)
-        raise_parser_error ParseError, "#{@scanner.rest.inspect} failed to terminate multiline comment"
+        raise_parser_error ParseError, 'Failed to terminate multiline comment'
       end
       @scanner.skip(%r{\*/})
 
