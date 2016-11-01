@@ -28,7 +28,7 @@ module Nanaimo
       let(:root_object) { { 'key' => [{ 'a' => 'a', 'b' => %w(c d) }], 'quoted' => "foo\n\t\\bar" } }
 
       it 'writes the output' do
-        expect(subject).to eq("#{utf8}{\n\tkey = (\n\t\t{\n\t\t\ta = a;\n\t\t\tb = (\n\t\t\t\tc,\n\t\t\t\td,\n\t\t\t);\n\t\t},\n\t);\n\tquoted = \"foo\\n\\t\\bar\";\n}\n")
+        expect(subject).to eq("#{utf8}{\n\tkey = (\n\t\t{\n\t\t\ta = a;\n\t\t\tb = (\n\t\t\t\tc,\n\t\t\t\td,\n\t\t\t);\n\t\t},\n\t);\n\tquoted = \"foo\\n\\t\\\\bar\";\n}\n")
       end
     end
 

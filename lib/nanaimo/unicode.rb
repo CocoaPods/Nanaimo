@@ -15,7 +15,7 @@ module Nanaimo
     end
 
     ESCAPE_PREFIXES = %W(
-      0 1 2 3 4 5 6 7 a b f n r t v \n U
+      0 1 2 3 4 5 6 7 a b f n r t v \n U \\
     ).freeze
 
     OCTAL_DIGITS = (0..7).map(&:to_s).freeze
@@ -32,7 +32,7 @@ module Nanaimo
       index = 0
       while index < string_length
         if escape_index = extracted_string.index('\\', index)
-          formatted_string << extracted_string[index..escape_index - 1] unless index == escape_index
+          formatted_string << extracted_string[index...escape_index] unless index == escape_index
           index = escape_index + 1
           next_char = extracted_string[index]
           if ESCAPE_PREFIXES.include?(next_char)

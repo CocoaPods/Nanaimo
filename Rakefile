@@ -40,7 +40,8 @@ task :generate_quote_maps do
     "\v" => '\\v',
     "\n" => '\\n',
     %(') => "\\'",
-    %(") => '\\"'
+    %(") => '\\"',
+    '\\' => '\\\\'
   }
 
   unquote_map = quote_map.each_with_object("\n" => "\n") do |(value, escaped), map|
