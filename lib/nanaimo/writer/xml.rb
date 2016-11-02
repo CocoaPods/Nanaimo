@@ -17,6 +17,10 @@ module Nanaimo
 
       private
 
+      def plist_format
+        :xml
+      end
+
       def write_object(object)
         case object
         when Float, Integer

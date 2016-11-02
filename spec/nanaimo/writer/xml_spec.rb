@@ -5,7 +5,8 @@ module Nanaimo
     let(:root_object) { nil }
     let(:plist) { Plist.new.tap { |p| p.root_object = root_object } }
     let(:pretty) { true }
-    subject { Writer::XMLWriter.new(plist, pretty).write }
+    let(:strict) { true }
+    subject { Writer::XMLWriter.new(plist, pretty: pretty, strict: strict).write }
     let(:utf8) { Writer::UTF8 }
 
     def xml_plist(string)
@@ -23,6 +24,28 @@ module Nanaimo
 
       it 'writes the output' do
         expect(subject).to eq xml_plist("<dict>\n\t<key>key</key>\n\t<array>\n\t\t<dict>\n\t\t\t<key>a</key>\n\t\t\t<string>a</string>\n\t\t\t<key>b</key>\n\t\t\t<array>\n\t\t\t\t<string>c</string>\n\t\t\t\t<string>d</string>\n\t\t\t</array>\n\t\t</dict>\n\t</array>\n\t<key>quoted</key>\n\t<string>foo\n\t\\bar</string>\n</dict>")
+      end
+
+      context 'when strict is false' do
+        let(:strict) { false }
+        context 'and unknown object types are in the plist' do
+          let(:root_object) do
+            path_like = Class.new do
+              def to_s
+                '/dev/null'
+              end
+            end
+            {
+              'path_like' => path_like.new,
+              'regexp' => /how? about \n [this]*$/ox,
+              :symbol => :symbol
+            }
+          end
+
+          it 'serializes their string representation' do
+            expect(subject).to eq xml_plist("<dict>\n\t<key>path_like</key>\n\t<string>/dev/null</string>\n\t<key>regexp</key>\n\t<string>(?x-mi:how? about \\n [this]*$)</string>\n\t<key>symbol</key>\n\t<string>symbol</string>\n</dict>")
+          end
+        end
       end
     end
 

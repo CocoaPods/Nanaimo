@@ -5,7 +5,8 @@ module Nanaimo
     let(:root_object) { nil }
     let(:plist) { Plist.new.tap { |p| p.root_object = root_object } }
     let(:pretty) { true }
-    subject { Writer.new(plist, pretty).write }
+    let(:strict) { true }
+    subject { Writer.new(plist, pretty: pretty, strict: strict).write }
     let(:utf8) { Writer::UTF8 }
 
     describe '#write_annotation' do
@@ -29,6 +30,29 @@ module Nanaimo
 
       it 'writes the output' do
         expect(subject).to eq("#{utf8}{\n\tkey = (\n\t\t{\n\t\t\ta = a;\n\t\t\tb = (\n\t\t\t\tc,\n\t\t\t\td,\n\t\t\t);\n\t\t},\n\t);\n\tquoted = \"foo\\n\\t\\\\bar\";\n}\n")
+      end
+
+      context 'when strict is false' do
+        let(:strict) { false }
+        context 'and unknown object types are in the plist' do
+          let(:root_object) do
+            path_like = Class.new do
+              def to_s
+                '/dev/null'
+              end
+            end
+            {
+              'object' => ::Object.new,
+              'path_like' => path_like.new,
+              'regexp' => /how? about \n [this]*$/ox,
+              :symbol => :symbol
+            }
+          end
+
+          it 'serializes their string representation' do
+            expect(subject).to eq("// !$*UTF8*$!\n{\n\tobject = \"#{root_object['object']}\";\n\tpath_like = /dev/null;\n\tregexp = \"(?x-mi:how? about \\\\n [this]*$)\";\n\tsymbol = symbol;\n}\n")
+          end
+        end
       end
     end
 

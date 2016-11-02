@@ -8,6 +8,10 @@
   [Samuel Giddins](https://github.com/segiddins)
   [#5](https://github.com/CocoaPods/Nanaimo/issues/5)
 
+* Allow disabling 'strict' mode when writing plists, allowing unknown object
+  types to be serialized as their string representations.  
+  [Samuel Giddins](https://github.com/segiddins)
+
 ##### Bug Fixes
 
 * None.  
