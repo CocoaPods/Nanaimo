@@ -4,7 +4,9 @@
 
 ##### Enhancements
 
-* None.  
+* Add context to parse errors.  
+  [Samuel Giddins](https://github.com/segiddins)
+  [#5](https://github.com/CocoaPods/Nanaimo/issues/5)
 
 ##### Bug Fixes
 

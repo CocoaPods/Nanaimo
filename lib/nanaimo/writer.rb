@@ -60,7 +60,7 @@ module Nanaimo
       when Data
         write_data(object)
       else
-        raise "Cannot write #{object} to an ascii plist"
+        raise "Cannot write #{object.inspect} to an ascii plist"
       end
       write_annotation(object) if pretty
       output
