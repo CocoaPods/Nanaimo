@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Nanaimo::XcodeProjectWriter do
+describe Nanaimo::Writer::PBXProjWriter do
   context 'writing identical projects' do
-    projects = Dir[File.expand_path('../../fixtures/**/*.pbxproj', __FILE__)]
+    projects = Dir[File.expand_path('../../../fixtures/**/*.pbxproj', __FILE__)]
     it('needs projects!') { raise 'no projects!' } if projects.empty?
     projects.each do |project|
       it "serializes #{project.split(File::SEPARATOR)[-2]} exactly as it was read" do

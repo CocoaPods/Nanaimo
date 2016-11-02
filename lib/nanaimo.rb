@@ -17,5 +17,4 @@ module Nanaimo
   require 'nanaimo/reader'
   require 'nanaimo/unicode'
   require 'nanaimo/writer'
-  require 'nanaimo/xcode_project_writer'
 end
