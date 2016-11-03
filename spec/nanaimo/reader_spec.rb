@@ -376,6 +376,17 @@ module Nanaimo
      ^
  #  -------------------------------------------
                          E
+
+      include_examples 'parse errors',
+                       'when a multiline comment is unterminated',
+                       'abc /*',
+                       <<-E
+[!] Failed to terminate multiline comment
+ #  -------------------------------------------
+1>  abc /*
+          ^
+ #  -------------------------------------------
+                         E
     end
   end
 end
