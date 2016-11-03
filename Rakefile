@@ -48,6 +48,7 @@ task :generate_quote_maps do
     map[escaped[1..-1]] = value
     map
   end
+  quote_map.delete("'")
 
   0.upto(31) { |i| quote_map[[i].pack('U')] ||= format('\\U%04x', i) }
   quote_regexp = Regexp.union(quote_map.keys)

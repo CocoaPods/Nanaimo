@@ -81,6 +81,14 @@ module Nanaimo
           expect(subject).to eq(%(#{utf8}"Value" /*A whimsical value*/\n))
         end
       end
+
+      describe 'with quotes' do
+        let(:root_object) { %(a'"'"b) }
+
+        it 'writes escaped values' do
+          expect(subject).to eq(%(#{utf8}"a'\\\"'\\\"b"\n))
+        end
+      end
     end
 
     describe Array do
