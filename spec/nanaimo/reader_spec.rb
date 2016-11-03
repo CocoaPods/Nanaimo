@@ -107,6 +107,19 @@ module Nanaimo
           expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::String.new('$PROJECT_DIR/mogenerator/mogenerator', '') }, '')
         end
       end
+
+      describe 'that contain' do
+        valid_characters = ('a'..'z').to_a + ('A'..'Z').to_a + ('0'..'9').to_a + %w(_ $ / : . -)
+        valid_characters << valid_characters.join('')
+        valid_characters.each do |c|
+          describe "the valid character `#{c}`" do
+            let(:unquoted_string) { c }
+            it 'is parsed correctly' do
+              expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::String.new(c, '') }, '')
+            end
+          end
+        end
+      end
     end
 
     describe 'quoted strings' do
