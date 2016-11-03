@@ -3,45 +3,41 @@ require 'spec_helper'
 module Nanaimo
   describe Reader do
     describe 'Arrays' do
-      describe 'that are emtpy' do
-        before do
-          @reader = Reader.new('()')
-          @result = @reader.parse!
-        end
+      let(:string) { '()' }
+      let(:reader) { Reader.new(string) }
+      subject { reader.parse! }
 
+      describe 'that are emtpy' do
         it 'should return a plist' do
-          expect(@result).to be_a Plist
+          expect(subject).to be_a Plist
         end
 
         it 'should have a Nanaimo::Array as the root_object' do
-          expect(@result.root_object).to be_a Nanaimo::Array
+          expect(subject.root_object).to be_a Nanaimo::Array
         end
 
         it 'should have no values' do
-          expect(@result.root_object.value.count).to eql 0
+          expect(subject.root_object.value.count).to eql 0
         end
       end
 
       describe 'with values' do
-        before do
-          @reader = Reader.new("(\n\tIDENTIFIER,\nANOTHER_IDENTIFIER)")
-          @result = @reader.parse!
-        end
+        let(:string) { "(\n\tIDENTIFIER,\nANOTHER_IDENTIFIER)" }
 
         it 'should return a plist' do
-          expect(@result).to be_a Plist
+          expect(subject).to be_a Plist
         end
 
         it 'should have a Nanaimo::Array as the root_object' do
-          expect(@result.root_object).to be_a Nanaimo::Array
+          expect(subject.root_object).to be_a Nanaimo::Array
         end
 
         it 'should have two values' do
-          expect(@result.root_object.value.count).to eql 2
+          expect(subject.root_object.value.count).to eql 2
         end
 
         it 'should maintain ordering' do
-          expect(@result.root_object.value.map(&:value)).to eql %w(IDENTIFIER ANOTHER_IDENTIFIER)
+          expect(subject.root_object.value.map(&:value)).to eql %w(IDENTIFIER ANOTHER_IDENTIFIER)
         end
       end
     end
@@ -51,48 +47,45 @@ module Nanaimo
       let(:reader) { Reader.new(string) }
       subject { reader.parse!.root_object }
 
-      it 'should read the annotations correctly' do
+      it 'should parse the annotations' do
         expect(subject).to eq Nanaimo::Dictionary.new({
                                                         Nanaimo::String.new('a', 'annotation') =>
-                                                         Nanaimo::Array.new([
-                                                                              Nanaimo::String.new('b', 'another annotation')
-                                                                            ], '')
+                                                        Nanaimo::Array.new([
+                                                                             Nanaimo::String.new('b', 'another annotation')
+                                                                           ], '')
                                                       }, '')
       end
     end
 
     describe 'reading root level dictionaries' do
       let(:string) { '{a = "a";"b" = b;"c" = "c";   d = d;}' }
-
-      before do
-        @reader = Reader.new(string)
-        @result = @reader.parse!
-      end
+      let(:reader) { Reader.new(string) }
+      subject { reader.parse! }
 
       it 'should return a plist' do
-        expect(@result).to be_a Plist
+        expect(subject).to be_a Plist
       end
 
       it 'should have a Nanaimo::Dictionary as the root_object' do
-        expect(@result.root_object).to be_a Nanaimo::Dictionary
+        expect(subject.root_object).to be_a Nanaimo::Dictionary
       end
 
       it 'should have four keys' do
-        expect(@result.root_object.value.keys.count).to eq 4
+        expect(subject.root_object.value.keys.count).to eq 4
       end
 
       context 'when the dictionary is empty' do
         let(:string) { '{}' }
 
         it 'parses correctly' do
-          expect(@result).to eq Plist.new(Nanaimo::Dictionary.new({}, ''), :ascii)
+          expect(subject).to eq Plist.new(Nanaimo::Dictionary.new({}, ''), :ascii)
         end
 
         context 'and there are newlines' do
           let(:string) { "\t\n\t{\n\t\n}" }
 
           it 'parses correctly' do
-            expect(@result).to eq Plist.new(Nanaimo::Dictionary.new({}, ''), :ascii)
+            expect(subject).to eq Plist.new(Nanaimo::Dictionary.new({}, ''), :ascii)
           end
         end
       end
@@ -107,7 +100,7 @@ module Nanaimo
         expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::String.new('TEST', '') }, '')
       end
 
-      describe 'that start with $' do
+      describe 'that start with a `$`' do
         let(:unquoted_string) { '$PROJECT_DIR/mogenerator/mogenerator' }
 
         it 'are parsed correctly' do
