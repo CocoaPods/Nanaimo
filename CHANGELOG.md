@@ -8,7 +8,9 @@
 
 ##### Bug Fixes
 
-* None.  
+* Fix reading all supported characters in unquoted strings.  
+  [Samuel Giddins](https://github.com/segiddins)
+  [#13](https://github.com/CocoaPods/Nanaimo/issues/13)
 
 
 ## 0.2.0 (2016-11-02)
