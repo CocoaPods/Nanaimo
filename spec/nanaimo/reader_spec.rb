@@ -378,6 +378,41 @@ module Nanaimo
      ^
  #  -------------------------------------------
                          E
+
+      include_examples 'parse errors',
+                       'when the plist is empty',
+                       '',
+                       <<-E
+[!] Unexpected end of string while parsing
+ #  -------------------------------------------
+1>\s\s
+    ^
+ #  -------------------------------------------
+                         E
+
+      include_examples 'parse errors',
+                       'when the plist only contains whitespace',
+                       "  \n\t\r\n\t \n ",
+                       <<-E
+[!] Unexpected end of string while parsing
+ #  -------------------------------------------
+ #\s\s
+ #\s\s\t\s
+5>\s\s\s
+     ^
+ #  -------------------------------------------
+                         E
+
+      include_examples 'parse errors',
+                       'when a multiline comment is unterminated',
+                       'abc /*',
+                       <<-E
+[!] Failed to terminate multiline comment
+ #  -------------------------------------------
+1>  abc /*
+          ^
+ #  -------------------------------------------
+                         E
     end
   end
 end
