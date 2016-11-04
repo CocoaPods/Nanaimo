@@ -11,6 +11,10 @@
 * Fix extraneously escaping single quotes when writing quoted strings.  
   [Samuel Giddins](https://github.com/segiddins)
 
+* Properly align the `^` in parse error messages when the line with the syntax
+  error contains tabs.  
+  [Samuel Giddins](https://github.com/segiddins)
+
 
 ## 0.2.1 (2016-11-03)
 
