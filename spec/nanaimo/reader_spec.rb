@@ -233,6 +233,32 @@ module Nanaimo
           E
 
       include_examples 'parse errors',
+                       'with an error in the middle of the plist using tabs',
+                       <<-PLIST,
+(
+\t\t\t\t\t\t#{"a,\n" * 1000}
+\t\t\t\t\t\tc,
+\t\t\t\t\t\td,
+\t\t\t\t\t\te,\t ,,
+\t\t\t\t\t\tf,
+\t\t\t\t\t\tg,
+\t\t\t\t\t\t#{"z,\n" * 250}
+\t\t\t\t\t\tzz
+)
+          PLIST
+                       <<-E
+            [!] Invalid character "," in unquoted string
+                #  -------------------------------------------
+                #  \t\t\t\t\t\tc,
+                #  \t\t\t\t\t\td,
+            1005>  \t\t\t\t\t\te,\t ,,
+                   \t\t\t\t\t\t  \t ^
+                #  \t\t\t\t\t\tf,
+                #  \t\t\t\t\t\tg,
+                #  -------------------------------------------
+          E
+
+      include_examples 'parse errors',
                        'with an array missing a comma between elements',
                        <<-PLIST,
  (

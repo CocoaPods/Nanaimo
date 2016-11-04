@@ -47,12 +47,19 @@ module Nanaimo
         indicator  = "#{line_number.succ}>  "
 
         m =  ::String.new("\n")
+
         m << "#{indent}-------------------------------------------\n"
         m << lines[[line_number - n, 0].max...line_number].map do |l|
           "#{indent}#{l}\n"
         end.join
-        m << "#{indicator}#{lines[line_number]}\n"
-        m << ' ' * (column + s + 2) << "^\n"
+
+        line = lines[line_number].to_s
+        m << "#{indicator}#{line}\n"
+
+        m << ' ' * indent.size
+        m << line[0, column.pred].gsub(/[^\t]/, ' ')
+        m << "^\n"
+
         m << Array(lines[line_number.succ..[lines.count.pred, line_number + n].min]).map do |l|
           l.strip.empty? ? '' : "#{indent}#{l}\n"
         end.join
