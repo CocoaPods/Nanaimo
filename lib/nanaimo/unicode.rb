@@ -11,7 +11,7 @@ module Nanaimo
     module_function
 
     def quotify_string(string)
-      string.gsub(QUOTE_REGEXP) { |s| QUOTE_MAP[s] }
+      string.gsub(QUOTE_REGEXP, QUOTE_MAP)
     end
 
     ESCAPE_PREFIXES = %W(
@@ -82,7 +82,7 @@ module Nanaimo
     XML_STRING_ESCAPE_REGEXP = Regexp.union(XML_STRING_ESCAPES.keys)
 
     def xml_escape_string(string)
-      string.to_s.gsub(XML_STRING_ESCAPE_REGEXP) { |m| XML_STRING_ESCAPES[m] }
+      string.to_s.gsub(XML_STRING_ESCAPE_REGEXP, XML_STRING_ESCAPES)
     end
   end
 end
