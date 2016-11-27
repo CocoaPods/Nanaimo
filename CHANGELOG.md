@@ -8,7 +8,9 @@
 
 ##### Bug Fixes
 
-* None.  
+* Quote the empty string `nil` is implicitly written as in non-strict mode.  
+  [Samuel Giddins](https://github.com/segiddins)
+  [Xcodeproj#453](https://github.com/CocoaPods/Xcodeproj/issues/453)
 
 
 ## 0.2.2 (2016-11-04)
