@@ -74,7 +74,7 @@ module Nanaimo
         write_array(object)
       when Dictionary, ::Hash
         write_dictionary(object)
-      when QUOTED_STRING_REGEXP, QuotedString, ''
+      when QUOTED_STRING_REGEXP, QuotedString
         write_quoted_string(object)
       when String, ::String, Symbol
         write_string(object)
@@ -88,7 +88,7 @@ module Nanaimo
       output
     end
 
-    QUOTED_STRING_REGEXP = %r{[^\w\./]}
+    QUOTED_STRING_REGEXP = %r{\A\z|[^\w\./]}
     private_constant :QUOTED_STRING_REGEXP
 
     def write_string_quoted_if_necessary(object)

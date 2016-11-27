@@ -50,7 +50,14 @@ module Nanaimo
           end
 
           it 'serializes their string representation' do
-            expect(subject).to eq("// !$*UTF8*$!\n{\n\tobject = \"#{root_object['object']}\";\n\tpath_like = /dev/null;\n\tregexp = \"(?x-mi:how? about \\\\n [this]*$)\";\n\tsymbol = symbol;\n}\n")
+            expect(subject).to eq("#{utf8}{\n\tobject = \"#{root_object['object']}\";\n\tpath_like = /dev/null;\n\tregexp = \"(?x-mi:how? about \\\\n [this]*$)\";\n\tsymbol = symbol;\n}\n")
+          end
+        end
+
+        context 'with nil' do
+          let(:root_object) { { 'nilValue' => nil, 'array' => ['a', nil], nil => '' } }
+          it 'writes it as an empty, quoted string' do
+            expect(subject).to eq("#{utf8}{\n\tnilValue = \"\";\n\tarray = (\n\t\ta,\n\t\t\"\",\n\t);\n\t\"\" = \"\";\n}\n")
           end
         end
       end
