@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Nanaimo
   # An object that belongs to a plist.
   #
@@ -73,7 +75,7 @@ module Nanaimo
   #
   class Data < Object
     def initialize(value, annotation)
-      value &&= value.force_encoding(Encoding::BINARY)
+      value &&= value.dup.force_encoding(Encoding::BINARY)
       super(value, annotation)
     end
 

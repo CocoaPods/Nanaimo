@@ -1,4 +1,5 @@
 # frozen-string-literal: true
+
 module Nanaimo
   # Transforms plist strings into Plist objects.
   #

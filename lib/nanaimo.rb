@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'nanaimo/version'
 
 # A native Ruby implementation of ASCII plist parsing and serialization.

@@ -1,4 +1,5 @@
 # frozen-string-literal: true
+
 require 'nanaimo/unicode/next_step_mapping'
 require 'nanaimo/unicode/quote_maps'
 module Nanaimo

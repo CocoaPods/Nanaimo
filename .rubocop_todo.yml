@@ -6,14 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 3
-# Cop supports --auto-correct.
-Layout/EmptyLineAfterMagicComment:
-  Exclude:
-    - 'lib/nanaimo/reader.rb'
-    - 'lib/nanaimo/unicode.rb'
-    - 'nanaimo.gemspec'
-
 # Offense count: 22
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -58,13 +50,6 @@ Style/Encoding:
 # SupportedStyles: annotated, template, unannotated
 Style/FormatStringToken:
   EnforcedStyle: unannotated
-
-# Offense count: 18
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: when_needed, always, never
-Style/FrozenStringLiteralComment:
-  Enabled: false
 
 # Offense count: 2
 Style/IdenticalConditionalBranches:

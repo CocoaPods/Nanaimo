@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 module Nanaimo
@@ -161,7 +163,7 @@ module Nanaimo
         it "raises an informative error #{name}" do
           if expected_error.is_a?(::String)
             prefix = expected_error.scan(/^[ \t]*(?=\S)/).min
-            expected_error.gsub!(/^#{prefix}/, '')
+            expected_error = expected_error.gsub(/^#{prefix}/, '')
           end
 
           expect { Reader.new(plist).parse! }
