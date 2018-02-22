@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Nanaimo
   # Transforms native ruby objects or Plist objects into their ASCII Plist
   # string representation.
