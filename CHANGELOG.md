@@ -1,5 +1,16 @@
 # Nanaimo Changelog
 
+## Master
+
+##### Enhancements
+
+* None.  
+
+##### Bug Fixes
+
+* None.  
+
+
 ## 0.2.4 (2018-03-22)
 
 ##### Enhancements
