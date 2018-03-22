@@ -4,7 +4,8 @@
 
 ##### Enhancements
 
-* None.  
+* Enable frozen string literals to improve performance.  
+  [Samuel Giddins](https://github.com/segiddins)
 
 ##### Bug Fixes
 
