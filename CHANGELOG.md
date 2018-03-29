@@ -27,7 +27,9 @@
 
 ##### Enhancements
 
-* None.  
+* Fix parsing arrays that contain a comment after a trailing comma.  
+  [Samuel Giddins](https://github.com/segiddins)
+  [#26](https://github.com/CocoaPods/Nanaimo/issues/26)
 
 ##### Bug Fixes
 
