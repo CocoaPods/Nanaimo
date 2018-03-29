@@ -124,8 +124,8 @@ module Nanaimo
       # TODO
     end
 
-    def parse_object
-      _comment = skip_to_non_space_matching_annotations
+    def parse_object(already_parsed_comment: false)
+      _comment = skip_to_non_space_matching_annotations unless already_parsed_comment
       start_pos = @scanner.pos
       raise_parser_error ParseError, 'Unexpected end of string while parsing' if @scanner.eos?
       if @scanner.skip(/\{/)
@@ -163,10 +163,10 @@ module Nanaimo
     def parse_array
       objects = []
       until @scanner.eos?
-        eat_whitespace!
+        _comment = skip_to_non_space_matching_annotations
         break if @scanner.skip(/\)/)
 
-        objects << parse_object
+        objects << parse_object(already_parsed_comment: true)
 
         eat_whitespace!
         break if @scanner.skip(/\)/)
@@ -181,10 +181,10 @@ module Nanaimo
     def parse_dictionary
       objects = {}
       until @scanner.eos?
-        skip_to_non_space_matching_annotations
+        _comment = skip_to_non_space_matching_annotations
         break if @scanner.skip(/}/)
 
-        key = parse_object
+        key = parse_object(already_parsed_comment: true)
         eat_whitespace!
         unless @scanner.skip(/=/)
           raise_parser_error ParseError, "Dictionary missing value for key #{key.as_ruby.inspect}, expected '=' and found #{current_character.inspect}"
@@ -262,8 +262,6 @@ module Nanaimo
           annotation = read_multiline_comment
           next
         end
-
-        eat_whitespace!
 
         break
       end

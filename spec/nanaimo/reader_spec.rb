@@ -41,6 +41,36 @@ module Nanaimo
         it 'should maintain ordering' do
           expect(subject.root_object.value.map(&:value)).to eql %w(IDENTIFIER ANOTHER_IDENTIFIER)
         end
+
+        describe 'with a trailing comma' do
+          let(:string) { <<-PLIST }
+            {
+              singleline = ( A, B, );
+              singleline_no_spaces = (A,B,);
+              singleline_trailing_comment = ( A , B, /* comment!*/ );
+              multiline = (
+                A,
+                B,
+              );
+              multiline_last_line_comment = (
+                A,
+                B,
+                // comment! C,
+              )
+            }
+          PLIST
+
+          it 'should parse' do
+            expect(subject).to be_a Plist
+            expect(subject.as_ruby).to eq(
+              'singleline' => %w[A B],
+              'singleline_no_spaces' => %w[A B],
+              'singleline_trailing_comment' => %w[A B],
+              'multiline' => %w[A B],
+              'multiline_last_line_comment' => %w[A B]
+            )
+          end
+        end
       end
     end
 
@@ -56,6 +86,19 @@ module Nanaimo
                                                                              Nanaimo::String.new('b', 'another annotation')
                                                                            ], '')
                                                       }, '')
+      end
+
+      describe 'when there are multiple comments after the object' do
+        let(:string) { "{a /*annotation1*/ /*annotation2*/ = ( b //annotation3\n//annotation4\n )}" }
+
+        it 'should parse the annotations' do
+          expect(subject).to eq Nanaimo::Dictionary.new({
+                                                          Nanaimo::String.new('a', 'annotation2') =>
+                                                          Nanaimo::Array.new([
+                                                                               Nanaimo::String.new('b', "annotation4\n")
+                                                                             ], '')
+                                                        }, '')
+        end
       end
     end
 
@@ -89,6 +132,26 @@ module Nanaimo
           it 'parses correctly' do
             expect(subject).to eq Plist.new(Nanaimo::Dictionary.new({}, ''), :ascii)
           end
+        end
+      end
+
+      context 'when the dictionarly contains comments' do
+        let(:string) { <<-PLIST }
+          {
+            comment_before_key = { /* comment */ k  = v; };
+            comment_before_value = { k  = /* comment */ v; };
+            comment_after_value_annotation = { k  = v /* annotation */ /* comment */ ; };
+            comment_after_last_semicolon = { k  = v; /* comment */ };
+          }
+        PLIST
+
+        it 'parses correctly' do
+          expect(subject.as_ruby).to eq(
+            'comment_after_value_annotation' => { 'k' => 'v' },
+            'comment_before_key' => { 'k' => 'v' },
+            'comment_before_value' => { 'k' => 'v' },
+            'comment_after_last_semicolon' => { 'k' => 'v' }
+          )
         end
       end
     end
