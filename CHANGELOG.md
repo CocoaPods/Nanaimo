@@ -1,5 +1,16 @@
 # Nanaimo Changelog
 
+## Master
+
+##### Enhancements
+
+* None.  
+
+##### Bug Fixes
+
+* None.  
+
+
 ## 0.2.5 (2018-04-04)
 
 ##### Enhancements
