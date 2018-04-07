@@ -63,8 +63,11 @@ module Nanaimo
       def isa_for(dictionary)
         dictionary = value_for(dictionary)
         return unless dictionary.is_a?(Hash)
-        isa = dictionary.values_at('isa', ISA).map(&method(:value_for)).compact.first
-        isa && value_for(isa)
+        if isa = dictionary['isa']
+          value_for(isa)
+        elsif isa = dictionary[ISA]
+          value_for(isa)
+        end
       end
 
       def flat_dictionary?(dictionary)
