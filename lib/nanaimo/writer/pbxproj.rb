@@ -40,7 +40,11 @@ module Nanaimo
       end
 
       def write_dictionary_key_value_pair(k, v)
-        @objects_section = true if value_for(k) == 'objects'
+        # since the objects section is always at the top-level,
+        # we can avoid checking if we're starting the 'objects'
+        # section if we're further "indented" (aka deeper) in the project
+        @objects_section = true if indent == 1 && value_for(k) == 'objects'
+
         super
       end
 
