@@ -28,7 +28,7 @@ module Nanaimo
           write_newline
           output << "/* Begin #{isa} section */"
           write_newline
-          sort_dictionary(kvs).each do |k, v|
+          sort_dictionary(kvs, key_can_be_isa: false).each do |k, v|
             write_dictionary_key_value_pair(k, v)
           end
           output << "/* End #{isa} section */"
@@ -48,19 +48,15 @@ module Nanaimo
         super
       end
 
-      def sort_dictionary(dictionary)
+      def sort_dictionary(dictionary, key_can_be_isa: true)
         hash = value_for(dictionary)
-        hash.to_a.sort do |(k1, v1), (k2, v2)|
-          v2_isa = isa_for(v2)
-          v1_isa = v2_isa && isa_for(v1)
-          comp = v1_isa <=> v2_isa
-          next comp if !comp.zero? && v1_isa
-
-          key1 = value_for(k1)
-          key2 = value_for(k2)
-          next -1 if key1 == 'isa'
-          next 1 if key2 == 'isa'
-          key1 <=> key2
+        hash.sort_by do |k, _v|
+          k = value_for(k)
+          if key_can_be_isa
+            k == 'isa' ? '' : k
+          else
+            k
+          end
         end
       end
 
