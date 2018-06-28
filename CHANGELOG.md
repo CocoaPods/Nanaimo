@@ -8,7 +8,9 @@
 
 ##### Bug Fixes
 
-* None.  
+* Fix parse errors crashing when attempting to show context when the error
+  occurs on the first character in the plist.  
+  [Samuel Giddins](https://github.com/segiddins)
 
 
 ## 0.2.5 (2018-04-04)

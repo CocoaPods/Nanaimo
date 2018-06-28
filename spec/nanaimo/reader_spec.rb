@@ -478,6 +478,30 @@ module Nanaimo
           ^
  #  -------------------------------------------
                          E
+
+      include_examples 'parse errors',
+                       'when the plist begins with an invalid string',
+                       "==// !$*UTF8*$!\n{}\n",
+                       <<-E
+[!] Invalid character "=" in unquoted string
+ #  -------------------------------------------
+1>  ==// !$*UTF8*$!
+    ^
+ #  {}
+ #  -------------------------------------------
+                         E
+
+      include_examples 'parse errors',
+                       'when the plist begins with an invalid string after whitespace',
+                       "  ==// !$*UTF8*$!\n{}\n",
+                       <<-E
+[!] Invalid character "=" in unquoted string
+ #  -------------------------------------------
+1>    ==// !$*UTF8*$!
+      ^
+ #  {}
+ #  -------------------------------------------
+                         E
     end
   end
 end

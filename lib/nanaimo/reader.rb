@@ -272,6 +272,7 @@ module Nanaimo
       pos = scanner.charpos
       line = scanner.string[0..scanner.charpos].scan(NEWLINE).size + 1
       column = pos - (scanner.string.rindex(NEWLINE, pos - 1) || -1)
+      column = [1, column].max
       [line, column]
     end
 
