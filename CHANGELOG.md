@@ -1,6 +1,6 @@
 # Nanaimo Changelog
 
-## Master
+## 0.2.6 (2018-07-01)
 
 ##### Enhancements
 
