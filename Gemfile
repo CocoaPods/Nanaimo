@@ -6,5 +6,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
+  gem 'rake', '~> 12.0'
+  gem 'rspec'
   gem 'rubocop', install_if: RUBY_VERSION >= '2.1'
 end
