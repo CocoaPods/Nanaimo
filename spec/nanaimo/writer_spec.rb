@@ -98,6 +98,14 @@ module Nanaimo
           expect(subject).to eq(%(#{utf8}"a'\\\"'\\\"b"\n))
         end
       end
+
+      describe 'string starts with three underscores' do
+        let(:root_object) { %(___a) }
+
+        it 'writes with quotes' do
+          expect(subject).to eq(%(#{utf8}"___a"\n))
+        end
+      end
     end
 
     describe Array do
