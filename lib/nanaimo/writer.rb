@@ -90,7 +90,7 @@ module Nanaimo
       output
     end
 
-    QUOTED_STRING_REGEXP = %r{\A\z|[^\w\./]}
+    QUOTED_STRING_REGEXP = %r{\A\z|[^\w\./]|\A___}
     private_constant :QUOTED_STRING_REGEXP
 
     def write_string_quoted_if_necessary(object)
