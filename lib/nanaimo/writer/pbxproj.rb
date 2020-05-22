@@ -9,8 +9,8 @@ module Nanaimo
       ISA = String.new('isa', '')
       private_constant :ISA
 
-      def initialize(*)
-        super
+      def initialize(plist, **args)
+        super(plist, **args)
         @objects_section = false
       end
 
