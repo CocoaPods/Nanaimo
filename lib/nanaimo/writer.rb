@@ -27,7 +27,7 @@ module Nanaimo
     #
     UTF8 = "// !$*UTF8*$!\n".freeze
 
-    # @param plist [Plist,String,Hash,Array] The plist obejct to write
+    # @param plist [Plist,String,Hash,Array] The plist object to write
     # @param pretty [Boolean] Whether to serialize annotations and add
     #                         spaces and newlines to make output more legible
     # @param output [#<<] The output stream to write the plist to
