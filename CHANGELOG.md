@@ -1,5 +1,16 @@
 # Nanaimo Changelog
 
+## Master
+
+##### Enhancements
+
+* None.  
+
+##### Bug Fixes
+
+* None.  
+
+
 ## 0.3.0 (2020-07-17)
 
 ##### Enhancements
