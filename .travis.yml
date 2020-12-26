@@ -8,6 +8,7 @@ language: ruby
 cache: bundler
 rvm:
   # The latest ruby version
+  - 3.0.0
   - 2.7.0
   - 2.6.2
   - 2.5.0
