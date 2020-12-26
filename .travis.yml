@@ -1,4 +1,4 @@
-dist: trusty
+dist: xenial
 bundler_args: --without debugging documentation
 branches:
   only:
