@@ -25,7 +25,7 @@ module Nanaimo
 
     # The magic comment that denotes a UTF8-encoded plist.
     #
-    UTF8 = "// !$*UTF8*$!\n".freeze
+    UTF8 = "// !$*UTF8*$!\n"
 
     # @param plist [Plist,String,Hash,Array] The plist object to write
     # @param pretty [Boolean] Whether to serialize annotations and add
