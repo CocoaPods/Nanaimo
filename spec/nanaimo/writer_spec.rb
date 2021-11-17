@@ -80,6 +80,14 @@ module Nanaimo
           expect(subject).to eq("#{utf8}Value /*A whimsical value*/\n")
         end
       end
+
+      describe 'string with dollar sign' do
+        let(:root_object) { %($ABC) }
+
+        it 'writes without quotes' do
+          expect(subject).to eq(%(#{utf8}$ABC\n))
+        end
+      end
     end
 
     describe QuotedString do
