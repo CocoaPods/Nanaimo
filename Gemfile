@@ -8,5 +8,7 @@ gemspec
 group :development do
   gem 'rake', '~> 12.0'
   gem 'rspec'
-  gem 'rubocop', install_if: RUBY_VERSION >= '2.1'
+  gem 'rubocop'
+  gem 'rubocop-rake', '~> 0.6.0'
+  gem 'rubocop-rspec', '~> 2.11'
 end

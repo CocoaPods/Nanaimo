@@ -2,16 +2,12 @@
 
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
 
 RSpec::Core::RakeTask.new(:spec)
+RuboCop::RakeTask.new
 
-task default: [:spec]
-
-if RUBY_VERSION >= '2.1'
-  require 'rubocop/rake_task'
-  RuboCop::RakeTask.new
-  task default: :rubocop
-end
+task default: [:spec, :rubocop]
 
 task :generate_nextstep_mappings do
   require 'net/http'
@@ -20,7 +16,7 @@ task :generate_nextstep_mappings do
                       .lines
                       .grep(/^[^#$]/)
                       .map { |l| l.split("\t", 3) }
-                      .reduce('') do |f, (ns, uc, cm)|
+                      .reduce(+'') do |f, (ns, uc, cm)|
     f << "      #{ns} => #{uc}, #{cm}"
   end
   map = <<-RUBY
@@ -60,7 +56,7 @@ task :generate_quote_maps do
   quote_regexp = Regexp.union(quote_map.keys)
 
   dump_hash = proc do |hash, indent = 4|
-    hash.reduce("{\n") { |dumped, (k, v)| dumped << "#{' ' * (indent + 2)}#{k.dump} => #{v.dump},\n" } << ' ' * indent << '}.freeze'
+    hash.reduce(+"{\n") { |dumped, (k, v)| dumped << "#{' ' * (indent + 2)}#{k.dump} => #{v.dump},\n" } << ' ' * indent << '}.freeze'
   end
 
   map = <<-RUBY
