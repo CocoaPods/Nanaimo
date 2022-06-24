@@ -7,7 +7,7 @@ RSpec::Core::RakeTask.new(:spec)
 
 task default: [:spec]
 
-if Gem.ruby_version >= Gem::Version.new('2.3')
+if Gem.ruby_version >= Gem::Version.new('2.6')
   require 'rubocop/rake_task'
   RuboCop::RakeTask.new
   task default: [:rubocop]

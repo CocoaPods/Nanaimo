@@ -9,7 +9,7 @@ group :development do
   gem 'rake', '~> 12.0'
   gem 'rspec'
 
-  install_if Gem.ruby_version >= Gem::Version.new('2.3') do
+  install_if Gem.ruby_version >= Gem::Version.new('2.6') do
     gem 'rubocop'
     gem 'rubocop-rake', '~> 0.6.0'
     gem 'rubocop-rspec', '~> 2.11'
