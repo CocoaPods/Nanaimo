@@ -1,11 +1,11 @@
 # frozen-string-literal: true
 
+autoload :StringScanner, 'strscan'
+
 module Nanaimo
   # Transforms plist strings into Plist objects.
   #
   class Reader
-    autoload :StringScanner, 'strscan'
-
     # Raised when attempting to read a plist with an unsupported file format.
     #
     class UnsupportedPlistFormatError < Error

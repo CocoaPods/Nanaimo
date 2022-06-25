@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
+autoload :Base64, 'base64'
+autoload :Date, 'date'
+autoload :DateTime, 'date'
+
 module Nanaimo
   class Writer
     # Transforms native ruby objects or Plist objects into their XML Plist
     # string representation.
     #
     class XMLWriter < Writer
-      autoload :Base64, 'base64'
-      autoload :Date, 'date'
-      autoload :DateTime, 'date'
-
       def write
         write_xml_header
         write_object(@plist.root_object)
