@@ -4,7 +4,9 @@
 
 ##### Enhancements
 
-* None.  
+* Allow dollar sign characters ($) in unquoted strings.  
+  [arthuralee](https://github.com/arthuralee)
+  [#58](https://github.com/CocoaPods/Nanaimo/pull/58)  
 
 ##### Bug Fixes
 
