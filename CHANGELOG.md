@@ -4,6 +4,17 @@
 
 ##### Enhancements
 
+* None.  
+
+##### Bug Fixes
+
+* None.  
+
+
+## 0.4.0 (2024-10-03)
+
+##### Enhancements
+
 * Allow dollar sign characters ($) in unquoted strings.  
   [arthuralee](https://github.com/arthuralee)
   [#58](https://github.com/CocoaPods/Nanaimo/pull/58)  
