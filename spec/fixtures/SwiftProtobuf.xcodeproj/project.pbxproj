@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -812,8 +812,8 @@
 		F4EDCC2A22DF896500A1ECB7 /* DoubleParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleParser.swift; sourceTree = "<group>"; };
 		F4F4F1161E5633E3006C6CAD /* Test_Naming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Test_Naming.swift; sourceTree = "<group>"; };
 		__PBXFileRef_Package.swift /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
-		__PBXFileRef_ProtobufTestSuite_Info.plist /* ProtobufTestSuite_Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ProtobufTestSuite_Info.plist; path = SwiftProtobuf.xcodeproj/ProtobufTestSuite_Info.plist; sourceTree = SOURCE_ROOT; };
-		__PBXFileRef_Protobuf_Info.plist /* Protobuf_Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Protobuf_Info.plist; path = SwiftProtobuf.xcodeproj/Protobuf_Info.plist; sourceTree = SOURCE_ROOT; };
+		__PBXFileRef_ProtobufTestSuite_Info.plist /* ProtobufTestSuite_Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = ProtobufTestSuite_Info.plist; path = SwiftProtobuf.xcodeproj/ProtobufTestSuite_Info.plist; sourceTree = SOURCE_ROOT; };
+		__PBXFileRef_Protobuf_Info.plist /* Protobuf_Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Protobuf_Info.plist; path = SwiftProtobuf.xcodeproj/Protobuf_Info.plist; sourceTree = SOURCE_ROOT; };
 		__PBXFileRef_Sources/Protobuf/Google_Protobuf_Duration_Extensions.swift /* Google_Protobuf_Duration+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Google_Protobuf_Duration+Extensions.swift"; sourceTree = "<group>"; };
 		__PBXFileRef_Sources/Protobuf/Google_Protobuf_FieldMask_Extensions.swift /* Google_Protobuf_FieldMask+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Google_Protobuf_FieldMask+Extensions.swift"; sourceTree = "<group>"; };
 		__PBXFileRef_Sources/Protobuf/Google_Protobuf_Struct.swift /* Google_Protobuf_Struct+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Google_Protobuf_Struct+Extensions.swift"; sourceTree = "<group>"; };
@@ -915,6 +915,10 @@
 		"_____Product_Protobuf_macOS" /* SwiftProtobuf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftProtobuf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		061239902D411EE20061F4C9 /* Synchronized Folder */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Synchronized Folder"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		9C8CDA0F1D7A288E00E207CA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -950,6 +954,7 @@
 				"_____Sources_" /* Sources */,
 				"_______Tests_" /* Tests */,
 				"_____Configs_" /* Resources */,
+				061239902D411EE20061F4C9 /* Synchronized Folder */,
 				"____Products_" /* Products */,
 			);
 			sourceTree = "<group>";
@@ -1358,10 +1363,9 @@
 			};
 			buildConfigurationList = "___RootConfs_" /* Build configuration list for PBXProject "SwiftProtobuf" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 			);
 			mainGroup = "___RootGroup_";
@@ -2214,7 +2218,11 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				INFOPLIST_FILE = SwiftProtobuf.xcodeproj/ProtobufTestSuite_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.swift.protobuf.SwiftProtobufTests;
 				PRODUCT_MODULE_NAME = SwiftProtobufTests;
 				PRODUCT_NAME = SwiftProtobufTests;
@@ -2228,7 +2236,11 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				INFOPLIST_FILE = SwiftProtobuf.xcodeproj/ProtobufTestSuite_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.swift.protobuf.SwiftProtobufTests;
 				PRODUCT_MODULE_NAME = SwiftProtobufTests;
 				PRODUCT_NAME = SwiftProtobufTests;
@@ -2361,7 +2373,8 @@
 				OTHER_SWIFT_FLAGS = "-DXcode";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				SWIFT_VERSION = 5.0;
 				USE_HEADERMAP = NO;

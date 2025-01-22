@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -137,6 +137,8 @@
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
 			fileType = pattern.proxy;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 			);
@@ -146,6 +148,8 @@
 			compilerSpec = com.apple.compilers.proxy.script;
 			filePatterns = "*.css";
 			fileType = pattern.proxy;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 				"${INPUT_FILE_BASE}.css.c",
@@ -156,6 +160,8 @@
 			isa = PBXBuildRule;
 			compilerSpec = "com.apple.build-tasks.copy-strings-file";
 			fileType = wrapper.xcclassmodel;
+			inputFiles = (
+			);
 			isEditable = 1;
 			outputFiles = (
 			);
@@ -364,7 +370,7 @@
 		E525242A16245AB20012E2BA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E525242C16245AB20012E2BA /* iOS_applicationTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iOS_applicationTests.h; sourceTree = "<group>"; };
 		E525242D16245AB20012E2BA /* iOS_applicationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iOS_applicationTests.m; sourceTree = "<group>"; };
-		E525243B16245AE10012E2BA /* Linked Folder */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Linked Folder"; sourceTree = "<group>"; };
+		E525243B16245AE10012E2BA /* Linked Folder */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Linked Folder"; sourceTree = "<group>"; };
 		E550D6B916371B1A00A003E9 /* UnitTestingBundle.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTestingBundle.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E550D6CB16371B2800A003E9 /* InAppPurchaseContent */ = {isa = PBXFileReference; explicitFileType = folder; includeInIndex = 0; path = InAppPurchaseContent; sourceTree = BUILT_PRODUCTS_DIR; };
 		E550D6D616371B3300A003E9 /* PlugIn.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlugIn.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -419,6 +425,10 @@
 		E5FBB2D416357C93009E96B0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		E5FBB3451635ED35009E96B0 /* ReferencedProject.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReferencedProject.xcodeproj; path = ReferencedProject/ReferencedProject.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0612398F2D411EA80061F4C9 /* Synchronized Folder */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Synchronized Folder"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		806F6FB317EFAF46001051EE /* Frameworks */ = {
@@ -769,6 +779,7 @@
 				E525238F16245A900012E2BA /* Frameworks */,
 				E525238D16245A900012E2BA /* Products */,
 				E525243B16245AE10012E2BA /* Linked Folder */,
+				0612398F2D411EA80061F4C9 /* Synchronized Folder */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 0;
@@ -1185,6 +1196,9 @@
 			);
 			dependencies = (
 				E52523C816245A910012E2BA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0612398F2D411EA80061F4C9 /* Synchronized Folder */,
 			);
 			name = "Cocoa Application";
 			productName = "Cocoa Application";
@@ -1725,9 +1739,9 @@
 					};
 				};
 			};
-			buildConfigurationList = E525238616245A900012E2BA /* Build configuration list for PBXProject "Cocoa Application Without productRefGroup" */;
+			buildConfigurationList = E525238616245A900012E2BA /* Build configuration list for PBXProject "Cocoa Application" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -3634,7 +3648,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E525238616245A900012E2BA /* Build configuration list for PBXProject "Cocoa Application Without productRefGroup" */ = {
+		E525238616245A900012E2BA /* Build configuration list for PBXProject "Cocoa Application" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E52523E116245A910012E2BA /* Debug */,

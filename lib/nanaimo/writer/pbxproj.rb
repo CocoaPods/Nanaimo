@@ -72,7 +72,7 @@ module Nanaimo
 
       def flat_dictionary?(dictionary)
         case isa_for(dictionary)
-        when 'PBXBuildFile', 'PBXFileReference'
+        when 'PBXBuildFile', 'PBXFileReference', 'PBXFileSystemSynchronizedRootGroup'
           true
         else
           false

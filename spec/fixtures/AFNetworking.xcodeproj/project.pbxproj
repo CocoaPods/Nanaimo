@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -257,8 +257,8 @@
 		298D7C8D1BC2C88F00FD3B3E /* AFUIImageViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AFUIImageViewTests.m; sourceTree = "<group>"; };
 		298D7C8E1BC2C88F00FD3B3E /* AFUIRefreshControlTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AFUIRefreshControlTests.m; sourceTree = "<group>"; };
 		298D7C8F1BC2C88F00FD3B3E /* AFURLSessionManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManagerTests.m; sourceTree = "<group>"; };
-		298D7CDF1BC2CB5A00FD3B3E /* ADNNetServerTrustChain */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ADNNetServerTrustChain; sourceTree = "<group>"; };
-		298D7CE21BC2CB7C00FD3B3E /* HTTPBinOrgServerTrustChain */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HTTPBinOrgServerTrustChain; sourceTree = "<group>"; };
+		298D7CDF1BC2CB5A00FD3B3E /* ADNNetServerTrustChain */ = {isa = PBXFileReference; lastKnownFileType = text; path = ADNNetServerTrustChain; sourceTree = "<group>"; };
+		298D7CE21BC2CB7C00FD3B3E /* HTTPBinOrgServerTrustChain */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTTPBinOrgServerTrustChain; sourceTree = "<group>"; };
 		299522391BBF104D00859F49 /* AFNetworking.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AFNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2995223C1BBF104D00859F49 /* AFNetworking.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AFNetworking.h; path = ../Framework/AFNetworking.h; sourceTree = "<group>"; };
 		2995223E1BBF104D00859F49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Framework/Info.plist; sourceTree = "<group>"; };
@@ -302,10 +302,14 @@
 		5F4323B41BF63741003B8749 /* GeoTrust_Global_CA-cross.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GeoTrust_Global_CA-cross.cer"; sourceTree = "<group>"; };
 		5F4323B51BF63741003B8749 /* google.com.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = google.com.cer; sourceTree = "<group>"; };
 		5F4323BA1BF63741003B8749 /* GoogleInternetAuthorityG2.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = GoogleInternetAuthorityG2.cer; sourceTree = "<group>"; };
-		5F4323D41BF63CB0003B8749 /* GoogleComServerTrustChainPath1 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GoogleComServerTrustChainPath1; sourceTree = "<group>"; };
-		5F4323D81BF63CBA003B8749 /* GoogleComServerTrustChainPath2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GoogleComServerTrustChainPath2; sourceTree = "<group>"; };
-		5F4323DC1BF63CCC003B8749 /* GeoTrust_Global_CA_Root.cer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeoTrust_Global_CA_Root.cer; sourceTree = "<group>"; };
+		5F4323D41BF63CB0003B8749 /* GoogleComServerTrustChainPath1 */ = {isa = PBXFileReference; lastKnownFileType = text; path = GoogleComServerTrustChainPath1; sourceTree = "<group>"; };
+		5F4323D81BF63CBA003B8749 /* GoogleComServerTrustChainPath2 */ = {isa = PBXFileReference; lastKnownFileType = text; path = GoogleComServerTrustChainPath2; sourceTree = "<group>"; };
+		5F4323DC1BF63CCC003B8749 /* GeoTrust_Global_CA_Root.cer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = GeoTrust_Global_CA_Root.cer; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0612398D2D411D190061F4C9 /* Synchronized Folder */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Synchronized Folder"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		2987B0A11BC408A200179A4C /* Frameworks */ = {
@@ -467,6 +471,7 @@
 				299522851BBF13C700859F49 /* UIKit+AFNetworking */,
 				2995223B1BBF104D00859F49 /* Supporting Files */,
 				298D7C561BC2C88F00FD3B3E /* Tests */,
+				0612398D2D411D190061F4C9 /* Synchronized Folder */,
 				2995223A1BBF104D00859F49 /* Products */,
 			);
 			indentWidth = 4;
@@ -796,7 +801,7 @@
 			};
 			buildConfigurationList = 299522331BBF104D00859F49 /* Build configuration list for PBXProject "AFNetworking" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -1094,7 +1099,11 @@
 				INFOPLIST_FILE = ./Framework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.alamofire.AFNetworking;
 				PRODUCT_NAME = AFNetworking;
 				SDKROOT = appletvos;
@@ -1116,7 +1125,11 @@
 				INFOPLIST_FILE = ./Framework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.alamofire.AFNetworking;
 				PRODUCT_NAME = AFNetworking;
 				SDKROOT = appletvos;
@@ -1131,7 +1144,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = ./Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alamofire.AFNetworking-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
@@ -1143,7 +1160,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = ./Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alamofire.AFNetworking-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
@@ -1158,7 +1179,11 @@
 				GCC_PREFIX_HEADER = "$(PROJECT_DIR)/Tests/Tests-Prefix.pch";
 				INFOPLIST_FILE = ./Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alamofire.AFNetworking-iOS-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1171,7 +1196,11 @@
 				GCC_PREFIX_HEADER = "$(PROJECT_DIR)/Tests/Tests-Prefix.pch";
 				INFOPLIST_FILE = ./Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alamofire.AFNetworking-iOS-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1184,7 +1213,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "$(PROJECT_DIR)/Tests/Tests-Prefix.pch";
 				INFOPLIST_FILE = ./Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alamofire.AFNetworking-Mac-OS-X-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1199,7 +1232,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "$(PROJECT_DIR)/Tests/Tests-Prefix.pch";
 				INFOPLIST_FILE = ./Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alamofire.AFNetworking-Mac-OS-X-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1357,7 +1394,11 @@
 				INFOPLIST_FILE = ./Framework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.alamofire.AFNetworking;
 				PRODUCT_NAME = AFNetworking;
 				SKIP_INSTALL = YES;
@@ -1378,7 +1419,11 @@
 				INFOPLIST_FILE = ./Framework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.alamofire.AFNetworking;
 				PRODUCT_NAME = AFNetworking;
 				SKIP_INSTALL = YES;
@@ -1397,7 +1442,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = ./Framework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alamofire.AFNetworking-watchOS";
 				PRODUCT_NAME = AFNetworking;
 				SDKROOT = watchos;
@@ -1418,7 +1467,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = ./Framework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alamofire.AFNetworking-watchOS";
 				PRODUCT_NAME = AFNetworking;
 				SDKROOT = watchos;
@@ -1443,7 +1496,11 @@
 				INFOPLIST_FILE = ./Framework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.alamofire.AFNetworking;
 				PRODUCT_NAME = AFNetworking;
@@ -1468,7 +1525,11 @@
 				INFOPLIST_FILE = ./Framework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.alamofire.AFNetworking;
 				PRODUCT_NAME = AFNetworking;
