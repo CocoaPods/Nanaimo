@@ -95,6 +95,19 @@ module Nanaimo
     #
     def initialize(contents)
       @scanner = StringScanner.new(contents)
+      @string = @scanner.string
+      @walk_unquoted_strings = self.class.prefer_byte_walking?
+    end
+
+    # @return [Boolean] Whether walking bytes in Ruby beats a regexp engine
+    #         call for short tokens. True under YJIT and on non-CRuby
+    #         implementations; ZJIT and the interpreter favor the regexp.
+    #
+    # @!visibility private
+    #
+    def self.prefer_byte_walking?
+      return true unless defined?(RubyVM) # JRuby, TruffleRuby
+      defined?(RubyVM::YJIT) && RubyVM::YJIT.enabled? ? true : false
     end
 
     # Parses the contents of the plist
@@ -124,53 +137,92 @@ module Nanaimo
       # TODO
     end
 
+    UNQUOTED_STRING = %r{[\w_$/:.-]+}
+    UNQUOTED_STRING_BYTES = ::Array.new(256) { |b| !(UNQUOTED_STRING =~ b.chr).nil? }.freeze
+    DOUBLE_QUOTED_BODY = /[^"\\]*(?:\\.[^"\\]*)*/
+    SINGLE_QUOTED_BODY = /[^'\\]*(?:\\.[^'\\]*)*/
+    DATA_BODY = /[\h ]*>/
+    MULTILINE_COMMENT_BODY = %r{(?m:.)[^*]*(?:\*(?!/)[^*]*)*(?=\*/)}
+    private_constant :UNQUOTED_STRING, :UNQUOTED_STRING_BYTES, :DOUBLE_QUOTED_BODY, :SINGLE_QUOTED_BODY, :DATA_BODY, :MULTILINE_COMMENT_BODY
+
     def parse_object(already_parsed_comment: false)
-      _comment = skip_to_non_space_matching_annotations unless already_parsed_comment
+      skip_to_non_space_matching_annotations unless already_parsed_comment
       start_pos = @scanner.pos
       raise_parser_error ParseError, 'Unexpected end of string while parsing' if @scanner.eos?
-      if @scanner.skip(/\{/)
-        parse_dictionary
-      elsif @scanner.skip(/\(/)
-        parse_array
-      elsif @scanner.skip(/</)
-        parse_data
-      elsif quote = @scanner.scan(/['"]/)
-        parse_quotedstring(quote)
-      else
-        parse_string
-      end.tap do |o|
-        o.annotation = skip_to_non_space_matching_annotations
-        Nanaimo.debug { "parsed #{o.inspect} from #{start_pos}..#{@scanner.pos}" }
-      end
+      o = case @string.getbyte(start_pos)
+          when 0x7B # '{'
+            @scanner.pos = start_pos + 1
+            parse_dictionary
+          when 0x28 # '('
+            @scanner.pos = start_pos + 1
+            parse_array
+          when 0x3C # '<'
+            @scanner.pos = start_pos + 1
+            parse_data
+          when 0x22 # '"'
+            @scanner.pos = start_pos + 1
+            parse_quotedstring('"', DOUBLE_QUOTED_BODY)
+          when 0x27 # "'"
+            @scanner.pos = start_pos + 1
+            parse_quotedstring("'", SINGLE_QUOTED_BODY)
+          else
+            parse_string
+          end
+      o.annotation = skip_to_non_space_matching_annotations
+      Nanaimo.debug { "parsed #{o.inspect} from #{start_pos}..#{@scanner.pos}" } if DEBUG
+      o
     end
 
     def parse_string
-      eat_whitespace!
-      unless match = @scanner.scan(%r{[\w_$/:.-]+}o)
-        raise_parser_error ParseError, "Invalid character #{current_character.inspect} in unquoted string"
+      if @walk_unquoted_strings
+        start_pos = pos = @scanner.pos
+        pos += 1 while (byte = @string.getbyte(pos)) && UNQUOTED_STRING_BYTES[byte]
+        match = @string.byteslice(start_pos, pos - start_pos) unless pos == start_pos
+        @scanner.pos = pos
+      else
+        match = @scanner.scan(UNQUOTED_STRING)
       end
+      raise_parser_error ParseError, "Invalid character #{current_character.inspect} in unquoted string" unless match
       Nanaimo::String.new(match, nil)
     end
 
-    def parse_quotedstring(quote)
-      unless string = @scanner.scan(/(?:([^#{quote}\\]|\\.)*)#{quote}/)
+    def parse_quotedstring(quote, body)
+      start_pos = @scanner.pos
+      string = @scanner.scan(body)
+      if peek_byte == quote.ord
+        @scanner.pos += 1
+      else
+        @scanner.pos = start_pos
         raise_parser_error ParseError, "Unterminated quoted string, expected #{quote} but never found it"
       end
-      string = Unicode.unquotify_string(string.chomp!(quote))
+      string = if string.include?('\\')
+                 Unicode.unquotify_string(string)
+               elsif string.ascii_only?
+                 string.force_encoding(Encoding::BINARY)
+               else
+                 string
+               end
       Nanaimo::QuotedString.new(string, nil)
     end
 
     def parse_array
       objects = []
       until @scanner.eos?
-        _comment = skip_to_non_space_matching_annotations
-        break if @scanner.skip(/\)/)
+        skip_to_non_space_matching_annotations
+        if peek_byte == 0x29 # ')'
+          @scanner.pos += 1
+          break
+        end
 
         objects << parse_object(already_parsed_comment: true)
 
-        eat_whitespace!
-        break if @scanner.skip(/\)/)
-        unless @scanner.skip(/,/)
+        case peek_byte
+        when 0x29 # ')'
+          @scanner.pos += 1
+          break
+        when 0x2C # ','
+          @scanner.pos += 1
+        else
           raise_parser_error ParseError, "Array missing ',' in between objects"
         end
       end
@@ -181,21 +233,28 @@ module Nanaimo
     def parse_dictionary
       objects = {}
       until @scanner.eos?
-        _comment = skip_to_non_space_matching_annotations
-        break if @scanner.skip(/}/)
+        skip_to_non_space_matching_annotations
+        if peek_byte == 0x7D # '}'
+          @scanner.pos += 1
+          break
+        end
 
         key = parse_object(already_parsed_comment: true)
-        eat_whitespace!
-        unless @scanner.skip(/=/)
+        unless peek_byte == 0x3D # '='
           raise_parser_error ParseError, "Dictionary missing value for key #{key.as_ruby.inspect}, expected '=' and found #{current_character.inspect}"
         end
+        @scanner.pos += 1
 
         value = parse_object
         objects[key] = value
 
-        eat_whitespace!
-        break if @scanner.skip(/}/)
-        unless @scanner.skip(/;/)
+        case peek_byte
+        when 0x7D # '}'
+          @scanner.pos += 1
+          break
+        when 0x3B # ';'
+          @scanner.pos += 1
+        else
           raise_parser_error ParseError, "Dictionary missing ';' after key-value pair for #{key.as_ruby.inspect}, found #{current_character.inspect}"
         end
       end
@@ -204,7 +263,7 @@ module Nanaimo
     end
 
     def parse_data
-      unless data = @scanner.scan(/[\h ]*>/)
+      unless data = @scanner.scan(DATA_BODY)
         raise_parser_error ParseError, "Data missing closing '>'"
       end
       data.chomp!('>')
@@ -219,6 +278,16 @@ module Nanaimo
 
     def current_character
       @scanner.peek(1)
+    end
+
+    if StringScanner.method_defined?(:peek_byte)
+      def peek_byte
+        @scanner.peek_byte
+      end
+    else
+      def peek_byte
+        @string.getbyte(@scanner.pos)
+      end
     end
 
     def read_singleline_comment
@@ -241,30 +310,49 @@ module Nanaimo
     MANY_WHITESPACES = /#{WHITESPACE}+/
 
     def read_multiline_comment
-      unless annotation = @scanner.scan(%r{(?:.+?)(?=\*/)}m)
+      unless annotation = @scanner.scan(MULTILINE_COMMENT_BODY)
         raise_parser_error ParseError, 'Failed to terminate multiline comment'
       end
-      @scanner.skip(%r{\*/})
+      @scanner.pos += 2
 
       annotation
     end
 
     def skip_to_non_space_matching_annotations
       annotation = ''.freeze
-      until @scanner.eos?
-        eat_whitespace!
-
-        # Comment Detection
-        if @scanner.skip(%r{//})
-          annotation = read_singleline_comment
-          next
-        elsif @scanner.skip(%r{/\*})
-          annotation = read_multiline_comment
-          next
+      scanner = @scanner
+      string = @string
+      pos = scanner.pos
+      while true # rubocop:disable Style/InfiniteLoop
+        case string.getbyte(pos)
+        when 0x20, 0x09, 0x0A, 0x0B, 0x0C, 0x0D
+          # Short ASCII whitespace runs are cheaper to walk byte-by-byte than
+          # to hand to the regexp engine.
+          pos += 1
+          while (byte = string.getbyte(pos)) && (byte == 0x20 || (byte <= 0x0D && byte >= 0x09))
+            pos += 1
+          end
+        when 0xE2 # lead byte of U+2028 and U+2029
+          scanner.pos = pos
+          break unless skipped = scanner.skip(MANY_WHITESPACES)
+          pos += skipped
+        when 0x2F # '/'
+          case string.getbyte(pos + 1)
+          when 0x2F # '/'
+            scanner.pos = pos + 2
+            annotation = read_singleline_comment
+          when 0x2A # '*'
+            scanner.pos = pos + 2
+            annotation = read_multiline_comment
+          else
+            break
+          end
+          pos = scanner.pos
+        else
+          break
         end
-
-        break
       end
+      scanner.pos = pos
       annotation
     end
 
