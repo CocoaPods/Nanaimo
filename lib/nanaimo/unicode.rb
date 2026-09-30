@@ -9,10 +9,36 @@ module Nanaimo
     class UnsupportedEscapeSequenceError < Error; end
     class InvalidEscapeSequenceError < Error; end
 
+    QUOTE_CHARACTER_CLASS = Regexp.new("[#{QUOTE_MAP.keys.map { |c| format('\\x%02X', c.ord) }.join}]")
+    XML_STRING_ESCAPES = {
+      '&' => '&amp;',
+      '<' => '&lt;',
+      '>' => '&gt;'
+    }.freeze
+    XML_STRING_ESCAPE_REGEXP = Regexp.union(XML_STRING_ESCAPES.keys)
+    XML_STRING_ESCAPE_CHARACTER_CLASS = /[&<>]/.freeze
+
     module_function
 
-    def quotify_string(string)
-      string.gsub(QUOTE_REGEXP, QUOTE_MAP)
+    if Regexp.method_defined?(:match?)
+      def quotify_string(string)
+        return string.dup unless QUOTE_CHARACTER_CLASS.match?(string)
+        string.gsub(QUOTE_CHARACTER_CLASS, QUOTE_MAP)
+      end
+
+      def xml_escape_string(string)
+        string = string.to_s
+        return string.dup unless XML_STRING_ESCAPE_CHARACTER_CLASS.match?(string)
+        string.gsub(XML_STRING_ESCAPE_CHARACTER_CLASS, XML_STRING_ESCAPES)
+      end
+    else
+      def quotify_string(string)
+        string.gsub(QUOTE_CHARACTER_CLASS, QUOTE_MAP)
+      end
+
+      def xml_escape_string(string)
+        string.to_s.gsub(XML_STRING_ESCAPE_CHARACTER_CLASS, XML_STRING_ESCAPES)
+      end
     end
 
     ESCAPE_PREFIXES = %W(
@@ -73,17 +99,6 @@ module Nanaimo
         end
       end
       formatted_string
-    end
-
-    XML_STRING_ESCAPES = {
-      '&' => '&amp;',
-      '<' => '&lt;',
-      '>' => '&gt;'
-    }.freeze
-    XML_STRING_ESCAPE_REGEXP = Regexp.union(XML_STRING_ESCAPES.keys)
-
-    def xml_escape_string(string)
-      string.to_s.gsub(XML_STRING_ESCAPE_REGEXP, XML_STRING_ESCAPES)
     end
   end
 end
