@@ -7,12 +7,14 @@
 * Speed up parsing (2.4x-3.8x) and writing (1.2x-2.8x) of ASCII plists,
   with the largest gains under YJIT.  
   [Samuel Giddins](https://github.com/segiddins)
+  [#68](https://github.com/CocoaPods/Nanaimo/pull/68)  
 
 ##### Bug Fixes
 
 * Stop depending on the `base64` library when writing XML `<data>`, which is
   no longer loadable by default on Ruby 3.4+.  
   [Samuel Giddins](https://github.com/segiddins)
+  [#68](https://github.com/CocoaPods/Nanaimo/pull/68)  
 
 
 ## 0.4.0 (2024-10-03)
