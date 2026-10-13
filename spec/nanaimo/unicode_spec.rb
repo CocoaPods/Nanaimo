@@ -81,6 +81,38 @@ module Nanaimo
         end
       end
 
+      it 'decodes escaped UTF-16 surrogate pairs as valid UTF-8' do
+        decoded = described_class.unquotify_string('\\Ud83d\\UDE00')
+        expect(decoded).to eq('😀')
+        expect(decoded.valid_encoding?).to be(true)
+      end
+
+      it 'combines surrogate pairs at both supplementary Unicode boundaries' do
+        expect(described_class.unquotify_string('\\Ud800\\Udc00\\UDBFF\\UDFFF')).to eq("\u{10000}\u{10ffff}")
+      end
+
+      it 'preserves text and following Unicode escapes around surrogate pairs' do
+        expect(described_class.unquotify_string('a\\Ud83d\\Ude00\\U0042\\Ud801\\Udc00z')).to eq("a😀B\u{10400}z")
+      end
+
+      it 'leaves unpaired and non-adjacent surrogate code units unchanged' do
+        {
+          '\\Ud800' => [0xd800],
+          '\\Udc00' => [0xdc00],
+          '\\Ud800a\\Udc00' => [0xd800, 0x61, 0xdc00],
+          '\\Ud800\\U0041' => [0xd800, 0x41],
+          '\\U0041\\Udc00' => [0x41, 0xdc00]
+        }.each do |escaped, code_units|
+          expect(described_class.unquotify_string(escaped).bytes).to eq(code_units.pack('U*').bytes)
+        end
+      end
+
+      it 'still rejects malformed Unicode escapes following a high surrogate' do
+        %w[\\Ud800\\U01 \\Ud800\\U000G].each do |string|
+          expect { described_class.unquotify_string(string) }.to raise_error(described_class::InvalidEscapeSequenceError)
+        end
+      end
+
       it 'raises on invalid unicode sequences' do
         %w(\\U01 \\U \\UU \\U000G).each do |string|
           expect { described_class.unquotify_string(string) }

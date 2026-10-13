@@ -47,7 +47,12 @@ module Nanaimo
                 raise InvalidEscapeSequenceError, "Unicode '\\U' escape sequence terminated without 4 following hex characters"
               end
               index += length
-              formatted_string << [unicode_numbers.to_i(16)].pack('U')
+              code_point = unicode_numbers.to_i(16)
+              if code_point.between?(0xd800, 0xdbff) && extracted_string[index, 6] =~ /\A\\U([dD][c-fC-F]\h{2})\z/
+                code_point = 0x10000 + ((code_point - 0xd800) << 10) + Regexp.last_match(1).to_i(16) - 0xdc00
+                index += 6
+              end
+              formatted_string << [code_point].pack('U')
             elsif OCTAL_DIGITS.include?(next_char) # https://twitter.com/Catfish_Man/status/658014170055507968
               octal_string = extracted_string[index - 1, 3][/\A[0-7]{1,3}/]
               index += octal_string.size - 1

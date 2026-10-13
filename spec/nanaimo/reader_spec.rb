@@ -237,6 +237,14 @@ module Nanaimo
       end
     end
 
+    describe 'quoted strings with escaped surrogate pairs' do
+      it 'decodes supplementary Unicode characters to valid UTF-8 through the public parser' do
+        value = Reader.new('{key = "\\Ud83d\\Ude00\\Ud800\\Udc00";}').parse!.as_ruby.fetch('key')
+        expect(value).to eq("😀\u{10000}")
+        expect(value.valid_encoding?).to be(true)
+      end
+    end
+
     describe 'data' do
       let(:data) { '<0001 aB AB Cf 99 7 c >' }
       let(:reader) { Reader.new("{key = #{data}}") }
