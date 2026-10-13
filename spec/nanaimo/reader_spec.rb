@@ -230,6 +230,13 @@ module Nanaimo
       end
     end
 
+    describe 'quoted strings with short octal escapes' do
+      it 'decodes one to three octal digits through the public parser' do
+        plist = Reader.new('{key = "\\12\\1h9\\1234";}').parse!
+        expect(plist.as_ruby).to eq('key' => "\n\u0001h9S4")
+      end
+    end
+
     describe 'data' do
       let(:data) { '<0001 aB AB Cf 99 7 c >' }
       let(:reader) { Reader.new("{key = #{data}}") }

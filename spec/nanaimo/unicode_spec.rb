@@ -14,9 +14,9 @@ module Nanaimo
       "\u{1f30c}" => ["\u{1f30c}"],
       "\u1111" => ["\u1111", '\\U1111'],
       "\u001e" => ['\\U001e', '\\U001E'],
-      '12' => ['12', '\\12'],
-      '129' => ['129', '\\129'],
-      '1h9' => ['1h9', '\\1h9'],
+      '12' => ['12'],
+      '129' => ['129'],
+      '1h9' => ['1h9'],
       "a\nb" => ['a\\nb', "a\\\nb"],
       "\u0000" => ['\\U0000', "\u0000"],
       '5' => ['5', '\\U0035'],
@@ -57,6 +57,28 @@ module Nanaimo
 
       it 'does not reuse a preceding NeXTSTEP conversion for ASCII octal escapes' do
         expect(described_class.unquotify_string('\\201\\101\\000\\177')).to eq("ÀA\0\u007f")
+      end
+
+      it 'decodes every one-digit short octal escape' do
+        (0..7).each do |byte|
+          expect(described_class.unquotify_string("\\#{byte}")).to eq(byte.chr(Encoding::UTF_8))
+        end
+      end
+
+      it 'decodes every two-digit short octal escape, including leading zeroes' do
+        (0..63).each do |byte|
+          expect(described_class.unquotify_string(format('\\%02o', byte))).to eq(byte.chr(Encoding::UTF_8))
+        end
+      end
+
+      it 'stops short octal escapes at a non-octal character or three digits' do
+        expect(described_class.unquotify_string('\\1234\\12x\\1h9\\129')).to eq("S4\nx\u0001h9\n9")
+      end
+
+      it 'still rejects octal escapes outside the byte range' do
+        %w[\\400 \\777].each do |string|
+          expect { described_class.unquotify_string(string) }.to raise_error(described_class::InvalidEscapeSequenceError)
+        end
       end
 
       it 'raises on invalid unicode sequences' do

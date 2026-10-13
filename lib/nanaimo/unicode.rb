@@ -49,18 +49,14 @@ module Nanaimo
               index += length
               formatted_string << [unicode_numbers.to_i(16)].pack('U')
             elsif OCTAL_DIGITS.include?(next_char) # https://twitter.com/Catfish_Man/status/658014170055507968
-              octal_string = extracted_string[index - 1, 3]
-              if octal_string =~ /\A[0-7]{3}\z/
-                index += 2
-                code_point = octal_string.to_i(8)
-                converted = code_point < 0x80 ? code_point : NEXT_STEP_MAPPING[code_point]
-                unless converted
-                  raise InvalidEscapeSequenceError, "Invalid octal escape sequence #{octal_string}"
-                end
-                formatted_string << [converted].pack('U')
-              else
-                formatted_string << next_char
+              octal_string = extracted_string[index - 1, 3][/\A[0-7]{1,3}/]
+              index += octal_string.size - 1
+              code_point = octal_string.to_i(8)
+              converted = code_point < 0x80 ? code_point : NEXT_STEP_MAPPING[code_point]
+              unless converted
+                raise InvalidEscapeSequenceError, "Invalid octal escape sequence #{octal_string}"
               end
+              formatted_string << [converted].pack('U')
             else
               raise UnsupportedEscapeSequenceError, "Failed to handle #{next_char} which is in the list of possible escapes"
             end
