@@ -86,6 +86,16 @@ is a \t string 'that ' "contains" wacky &amp; &lt;weird &amp;&gt; char&gt;&lt;&g
           XML
         end
       end
+
+      describe 'carriage returns' do
+        let(:root_object) { { "k\r\ney" => "x\ry\r\nz" } }
+
+        # XML parsers normalize raw CR and CRLF to LF, so CR must be a
+        # character reference to survive in both values and keys.
+        it 'writes carriage returns as character references' do
+          expect(subject).to eq xml_plist("<dict>\n\t<key>k&#13;\ney</key>\n\t<string>x&#13;y&#13;\nz</string>\n</dict>")
+        end
+      end
     end
 
     describe QuotedString do

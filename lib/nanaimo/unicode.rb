@@ -80,7 +80,9 @@ module Nanaimo
     XML_STRING_ESCAPES = {
       '&' => '&amp;',
       '<' => '&lt;',
-      '>' => '&gt;'
+      '>' => '&gt;',
+      # XML end-of-line handling turns raw CR and CRLF into LF.
+      "\r" => '&#13;'
     }.freeze
     XML_STRING_ESCAPE_REGEXP = Regexp.union(XML_STRING_ESCAPES.keys)
 
