@@ -153,7 +153,7 @@ module Nanaimo
     end
 
     def parse_quotedstring(quote)
-      unless string = @scanner.scan(/(?:([^#{quote}\\]|\\.)*)#{quote}/)
+      unless string = @scanner.scan(/(?:([^#{quote}\\]|\\.)*)#{quote}/m)
         raise_parser_error ParseError, "Unterminated quoted string, expected #{quote} but never found it"
       end
       string = Unicode.unquotify_string(string.chomp!(quote))

@@ -212,6 +212,17 @@ module Nanaimo
       end
     end
 
+    describe 'escaped literal newlines in quoted strings' do
+      ['"', "'"].each do |quote|
+        ["\n", "\r", "\r\n", "\u2028", "\u2029"].each do |newline|
+          it "preserves escaped #{newline.inspect} inside #{quote} quotes" do
+            input = "#{quote}before\\#{newline}after#{quote}"
+            expect(Reader.new(input).parse!.as_ruby).to eq("before#{newline}after")
+          end
+        end
+      end
+    end
+
     describe 'data' do
       let(:data) { '<0001 aB AB Cf 99 7 c >' }
       let(:reader) { Reader.new("{key = #{data}}") }
