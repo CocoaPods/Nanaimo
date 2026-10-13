@@ -41,6 +41,9 @@
 * Write wrapped XML dictionary keys using their actual string values.  
   [Samuel Giddins](https://github.com/segiddins)
 
+* Write XML plist data on Ruby 3.4+ without depending on the base64 gem.  
+  [Samuel Giddins](https://github.com/segiddins)
+
 
 ## 0.4.0 (2024-10-03)
 

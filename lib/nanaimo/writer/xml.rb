@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-autoload :Base64, 'base64'
 autoload :Date, 'date'
 autoload :DateTime, 'date'
 
@@ -83,7 +82,7 @@ module Nanaimo
 
       def write_data(object)
         output << '<data>'
-        data = Base64.encode64(value_for(object)).delete("\n")
+        data = [value_for(object)].pack('m0')
         data = data.scan(/.{1,76}/).join("\n") if pretty
         output << data << '</data>'
       end
