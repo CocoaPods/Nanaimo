@@ -114,9 +114,9 @@ module Nanaimo
       def write_dictionary(object)
         object = value_for(object)
         return output << '<dict/>' if object.empty?
-        keys = object.keys.sort_by(&:to_s)
+        keys = object.keys.sort_by { |key| value_for(key).to_s }
         object = keys.each_with_object({}) do |key, hash|
-          hash[key.to_s] = object[key]
+          hash[value_for(key).to_s] = object[key]
         end
         super(object)
       end

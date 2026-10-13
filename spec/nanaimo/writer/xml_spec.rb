@@ -173,6 +173,20 @@ is a \t string 'that ' "contains" wacky &amp; &lt;weird &amp;&gt; char&gt;&lt;&g
           expect(subject).to eq xml_plist("<dict>\n\t<key>ABCDEFFEDCBA</key>\n\t<dict/>\n</dict>")
         end
       end
+
+      describe 'with Nanaimo object keys' do
+        let(:root_object) do
+          Dictionary.new({
+                           String.new('z', 'Key comment') => String.new('last', nil),
+                           'm' => 'middle',
+                           QuotedString.new('a', nil) => QuotedString.new('first', nil)
+                         }, nil)
+        end
+
+        it 'writes and sorts keys by their wrapped value' do
+          expect(subject).to eq xml_plist("<dict>\n\t<key>a</key>\n\t<string>first</string>\n\t<key>m</key>\n\t<string>middle</string>\n\t<key>z</key>\n\t<string>last</string>\n</dict>")
+        end
+      end
     end
 
     describe Data do
