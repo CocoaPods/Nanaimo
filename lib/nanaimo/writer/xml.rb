@@ -63,7 +63,14 @@ module Nanaimo
       end
 
       def write_date(object)
-        output << '<date>' << object.iso8601 << '</date>'
+        # Plist dates are UTC, whole seconds, with a Z suffix. A Date has no
+        # zone or time of day and is written as midnight UTC on that date.
+        object = case object
+                 when Time then object.getutc
+                 when DateTime then object.new_offset(0)
+                 else object
+                 end
+        output << '<date>' << object.strftime('%Y-%m-%dT%H:%M:%SZ') << '</date>'
       end
 
       def write_string(object)

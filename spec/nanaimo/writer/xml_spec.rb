@@ -59,6 +59,41 @@ module Nanaimo
       end
     end
 
+    describe 'writing times' do
+      # Use a fresh process to ensure writing Time does not depend on another
+      # caller loading optional standard libraries.
+      it 'does not depend on the caller requiring time' do
+        require 'open3'
+        require 'rbconfig'
+        script = 'print Nanaimo::Writer::XMLWriter.new(Nanaimo::Plist.new(Time.at(0).utc)).write'
+        lib = File.expand_path('../../../lib', __dir__)
+        output, error, status = Open3.capture3(RbConfig.ruby, '-I', lib, '-r', 'nanaimo', '-e', script)
+        expect(error).to eq ''
+        expect(status).to be_success
+        expect(output).to eq xml_plist('<date>1970-01-01T00:00:00Z</date>')
+      end
+    end
+
+    describe 'writing dates' do
+      require 'date'
+      let(:local_time) { Time.new(2000, 1, 2, 3, 4, Rational(5_987_654, 1_000_000), '+05:30') }
+      let(:root_object) do
+        [
+          Time.utc(2000, 1, 2, 3, 4, 5),
+          local_time,
+          DateTime.new(2000, 1, 2, 3, 4, 5, '-07:00'),
+          Date.new(2000, 1, 2)
+        ]
+      end
+
+      # Plist dates are UTC with whole seconds and a Z suffix; a Date has no
+      # time of day or zone, so it is written as midnight UTC on that date.
+      it 'writes every date type as a UTC timestamp with whole seconds' do
+        expect(subject).to eq xml_plist("<array>\n\t<date>2000-01-02T03:04:05Z</date>\n\t<date>2000-01-01T21:34:05Z</date>\n\t<date>2000-01-02T10:04:05Z</date>\n\t<date>2000-01-02T00:00:00Z</date>\n</array>")
+        expect(local_time.utc_offset).to eq 19_800
+      end
+    end
+
     describe 'writing numbers' do
       let(:root_object) { [1, 3.14] }
 
