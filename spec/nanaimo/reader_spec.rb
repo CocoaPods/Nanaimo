@@ -247,6 +247,21 @@ module Nanaimo
       end
     end
 
+    describe 'unterminated containers at EOF' do
+      ['(', '(a,', '{', '{a=b;', '{a=(b,c);', '({a=b;},'].each do |input|
+        it "rejects #{input.inspect} with an error at EOF" do
+          expect { Reader.new(input).parse! }.to raise_error(Reader::ParseError) do |error|
+            expect(error.location).to eq([1, input.length + 1])
+            expect(error.to_s).to include('Unexpected end of string while parsing')
+          end
+        end
+      end
+
+      it 'rejects a missing inner array closer before a dictionary closer' do
+        expect { Reader.new('{a=(b,c;}').parse! }.to raise_error(Reader::ParseError)
+      end
+    end
+
     describe 'parse errors' do
       shared_examples_for 'parse errors' do |name, plist, expected_error|
         it "raises an informative error #{name}" do

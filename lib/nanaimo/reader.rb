@@ -162,7 +162,7 @@ module Nanaimo
 
     def parse_array
       objects = []
-      until @scanner.eos?
+      loop do
         _comment = skip_to_non_space_matching_annotations
         break if @scanner.skip(/\)/)
 
@@ -180,7 +180,7 @@ module Nanaimo
 
     def parse_dictionary
       objects = {}
-      until @scanner.eos?
+      loop do
         _comment = skip_to_non_space_matching_annotations
         break if @scanner.skip(/}/)
 
