@@ -53,7 +53,8 @@ module Nanaimo
               if octal_string =~ /\A[0-7]{3}\z/
                 index += 2
                 code_point = octal_string.to_i(8)
-                unless code_point <= 0x80 || converted = NEXT_STEP_MAPPING[code_point]
+                converted = code_point < 0x80 ? code_point : NEXT_STEP_MAPPING[code_point]
+                unless converted
                   raise InvalidEscapeSequenceError, "Invalid octal escape sequence #{octal_string}"
                 end
                 formatted_string << [converted].pack('U')

@@ -223,6 +223,13 @@ module Nanaimo
       end
     end
 
+    describe 'quoted strings with ASCII and NeXTSTEP octal escapes' do
+      it 'preserves ASCII bytes after a mapped octal escape' do
+        plist = Reader.new('{key = "\\201\\101\\000\\177\\200";}').parse!
+        expect(plist.as_ruby).to eq('key' => "ÀA\0\u007f\u00a0")
+      end
+    end
+
     describe 'data' do
       let(:data) { '<0001 aB AB Cf 99 7 c >' }
       let(:reader) { Reader.new("{key = #{data}}") }

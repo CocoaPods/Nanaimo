@@ -45,6 +45,20 @@ module Nanaimo
         end
       end
 
+      it 'decodes every three-digit ASCII octal escape to its byte value' do
+        (0..127).each do |byte|
+          expect(described_class.unquotify_string(format('\\%03o', byte))).to eq(byte.chr(Encoding::UTF_8))
+        end
+      end
+
+      it 'maps octal escapes starting at 200 through the NeXTSTEP table' do
+        expect(described_class.unquotify_string('\\200\\201')).to eq("\u00a0À")
+      end
+
+      it 'does not reuse a preceding NeXTSTEP conversion for ASCII octal escapes' do
+        expect(described_class.unquotify_string('\\201\\101\\000\\177')).to eq("ÀA\0\u007f")
+      end
+
       it 'raises on invalid unicode sequences' do
         %w(\\U01 \\U \\UU \\U000G).each do |string|
           expect { described_class.unquotify_string(string) }
