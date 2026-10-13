@@ -47,19 +47,21 @@ module Nanaimo
                 raise InvalidEscapeSequenceError, "Unicode '\\U' escape sequence terminated without 4 following hex characters"
               end
               index += length
-              formatted_string << [unicode_numbers.to_i(16)].pack('U')
-            elsif OCTAL_DIGITS.include?(next_char) # https://twitter.com/Catfish_Man/status/658014170055507968
-              octal_string = extracted_string[index - 1, 3]
-              if octal_string =~ /\A[0-7]{3}\z/
-                index += 2
-                code_point = octal_string.to_i(8)
-                unless code_point <= 0x80 || converted = NEXT_STEP_MAPPING[code_point]
-                  raise InvalidEscapeSequenceError, "Invalid octal escape sequence #{octal_string}"
-                end
-                formatted_string << [converted].pack('U')
-              else
-                formatted_string << next_char
+              code_point = unicode_numbers.to_i(16)
+              if code_point.between?(0xd800, 0xdbff) && extracted_string[index, 6] =~ /\A\\U([dD][c-fC-F]\h{2})\z/
+                code_point = 0x10000 + ((code_point - 0xd800) << 10) + Regexp.last_match(1).to_i(16) - 0xdc00
+                index += 6
               end
+              formatted_string << [code_point].pack('U')
+            elsif OCTAL_DIGITS.include?(next_char) # https://twitter.com/Catfish_Man/status/658014170055507968
+              octal_string = extracted_string[index - 1, 3][/\A[0-7]{1,3}/]
+              index += octal_string.size - 1
+              code_point = octal_string.to_i(8)
+              converted = code_point < 0x80 ? code_point : NEXT_STEP_MAPPING[code_point]
+              unless converted
+                raise InvalidEscapeSequenceError, "Invalid octal escape sequence #{octal_string}"
+              end
+              formatted_string << [converted].pack('U')
             else
               raise UnsupportedEscapeSequenceError, "Failed to handle #{next_char} which is in the list of possible escapes"
             end
@@ -78,7 +80,9 @@ module Nanaimo
     XML_STRING_ESCAPES = {
       '&' => '&amp;',
       '<' => '&lt;',
-      '>' => '&gt;'
+      '>' => '&gt;',
+      # XML end-of-line handling turns raw CR and CRLF into LF.
+      "\r" => '&#13;'
     }.freeze
     XML_STRING_ESCAPE_REGEXP = Regexp.union(XML_STRING_ESCAPES.keys)
 

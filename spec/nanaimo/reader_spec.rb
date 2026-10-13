@@ -74,6 +74,21 @@ module Nanaimo
       end
     end
 
+    describe 'empty block comments' do
+      it 'accepts empty comments inside and before an empty array' do
+        expect(Reader.new('(/**/)').parse!.as_ruby).to eq([])
+        expect(Reader.new('/**/()').parse!.as_ruby).to eq([])
+      end
+
+      it 'accepts empty comments around dictionary keys and values' do
+        expect(Reader.new('{/**/"a"/**/=/**/"b"/**/;/**/}').parse!.as_ruby).to eq('a' => 'b')
+      end
+
+      it 'retains an empty trailing annotation after a nonempty one' do
+        expect(Reader.new('"a" /*first*/ /**/').parse!.root_object.annotation).to eq('')
+      end
+    end
+
     describe 'reading annotations' do
       let(:string) { '{a /*annotation*/ = ( b /*another annotation*/ )}' }
       let(:reader) { Reader.new(string) }
@@ -197,6 +212,39 @@ module Nanaimo
       end
     end
 
+    describe 'escaped literal newlines in quoted strings' do
+      ['"', "'"].each do |quote|
+        ["\n", "\r", "\r\n", "\u2028", "\u2029"].each do |newline|
+          it "preserves escaped #{newline.inspect} inside #{quote} quotes" do
+            input = "#{quote}before\\#{newline}after#{quote}"
+            expect(Reader.new(input).parse!.as_ruby).to eq("before#{newline}after")
+          end
+        end
+      end
+    end
+
+    describe 'quoted strings with ASCII and NeXTSTEP octal escapes' do
+      it 'preserves ASCII bytes after a mapped octal escape' do
+        plist = Reader.new('{key = "\\201\\101\\000\\177\\200";}').parse!
+        expect(plist.as_ruby).to eq('key' => "ÀA\0\u007f\u00a0")
+      end
+    end
+
+    describe 'quoted strings with short octal escapes' do
+      it 'decodes one to three octal digits through the public parser' do
+        plist = Reader.new('{key = "\\12\\1h9\\1234";}').parse!
+        expect(plist.as_ruby).to eq('key' => "\n\u0001h9S4")
+      end
+    end
+
+    describe 'quoted strings with escaped surrogate pairs' do
+      it 'decodes supplementary Unicode characters to valid UTF-8 through the public parser' do
+        value = Reader.new('{key = "\\Ud83d\\Ude00\\Ud800\\Udc00";}').parse!.as_ruby.fetch('key')
+        expect(value).to eq("😀\u{10000}")
+        expect(value.valid_encoding?).to be(true)
+      end
+    end
+
     describe 'data' do
       let(:data) { '<0001 aB AB Cf 99 7 c >' }
       let(:reader) { Reader.new("{key = #{data}}") }
@@ -204,6 +252,32 @@ module Nanaimo
 
       it 'parses' do
         expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::Data.new("\x00\x01\xab\xab\xcf\x99\x7c", '') }, '')
+      end
+
+      it 'round trips data that the writer splits across lines' do
+        bytes = "\x00" * 9
+        output = Writer.new(Plist.new(Nanaimo::Data.new(bytes, nil))).write
+        expect(Reader.new(output).parse!.as_ruby).to eq(bytes)
+      end
+
+      it 'accepts CoreFoundation whitespace between complete hex bytes' do
+        expect(Reader.new("<00\t01\n02\r03\u2028ab\u2029cd>").parse!.as_ruby).to eq("\x00\x01\x02\x03\xab\xcd".b)
+      end
+
+      ["\t", "\n", "\r", "\u2028", "\u2029"].each do |whitespace|
+        it "rejects #{whitespace.inspect} between hex nibbles" do
+          expect { Reader.new("<0#{whitespace}0>").parse! }.to raise_error(Reader::ParseError)
+        end
+      end
+
+      ["\v", "\f"].each do |whitespace|
+        it "rejects #{whitespace.inspect} inside data" do
+          expect { Reader.new("<#{whitespace}>").parse! }.to raise_error(Reader::ParseError)
+        end
+      end
+
+      it 'preserves legacy spaces between hex nibbles' do
+        expect(Reader.new('<0 0>').parse!.as_ruby).to eq("\x00".b)
       end
 
       context 'with an odd number of hex digits' do
@@ -218,6 +292,21 @@ module Nanaimo
  #  -------------------------------------------
           E
         end
+      end
+    end
+
+    describe 'unterminated containers at EOF' do
+      ['(', '(a,', '{', '{a=b;', '{a=(b,c);', '({a=b;},'].each do |input|
+        it "rejects #{input.inspect} with an error at EOF" do
+          expect { Reader.new(input).parse! }.to raise_error(Reader::ParseError) do |error|
+            expect(error.location).to eq([1, input.length + 1])
+            expect(error.to_s).to include('Unexpected end of string while parsing')
+          end
+        end
+      end
+
+      it 'rejects a missing inner array closer before a dictionary closer' do
+        expect { Reader.new('{a=(b,c;}').parse! }.to raise_error(Reader::ParseError)
       end
     end
 

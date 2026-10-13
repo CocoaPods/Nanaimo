@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-autoload :Base64, 'base64'
 autoload :Date, 'date'
 autoload :DateTime, 'date'
 
@@ -63,7 +62,14 @@ module Nanaimo
       end
 
       def write_date(object)
-        output << '<date>' << object.iso8601 << '</date>'
+        # Plist dates are UTC, whole seconds, with a Z suffix. A Date has no
+        # zone or time of day and is written as midnight UTC on that date.
+        object = case object
+                 when Time then object.getutc
+                 when DateTime then object.new_offset(0)
+                 else object
+                 end
+        output << '<date>' << object.strftime('%Y-%m-%dT%H:%M:%SZ') << '</date>'
       end
 
       def write_string(object)
@@ -76,7 +82,7 @@ module Nanaimo
 
       def write_data(object)
         output << '<data>'
-        data = Base64.encode64(value_for(object)).delete("\n")
+        data = [value_for(object)].pack('m0')
         data = data.scan(/.{1,76}/).join("\n") if pretty
         output << data << '</data>'
       end
@@ -107,9 +113,9 @@ module Nanaimo
       def write_dictionary(object)
         object = value_for(object)
         return output << '<dict/>' if object.empty?
-        keys = object.keys.sort_by(&:to_s)
+        keys = object.keys.sort_by { |key| value_for(key).to_s }
         object = keys.each_with_object({}) do |key, hash|
-          hash[key.to_s] = object[key]
+          hash[value_for(key).to_s] = object[key]
         end
         super(object)
       end
