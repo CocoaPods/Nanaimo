@@ -243,7 +243,7 @@ module Nanaimo
     MANY_WHITESPACES = /#{WHITESPACE}+/
 
     def read_multiline_comment
-      unless annotation = @scanner.scan(%r{(?:.+?)(?=\*/)}m)
+      unless annotation = @scanner.scan(%r{(?:.*?)(?=\*/)}m)
         raise_parser_error ParseError, 'Failed to terminate multiline comment'
       end
       @scanner.skip(%r{\*/})

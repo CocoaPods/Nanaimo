@@ -74,6 +74,21 @@ module Nanaimo
       end
     end
 
+    describe 'empty block comments' do
+      it 'accepts empty comments inside and before an empty array' do
+        expect(Reader.new('(/**/)').parse!.as_ruby).to eq([])
+        expect(Reader.new('/**/()').parse!.as_ruby).to eq([])
+      end
+
+      it 'accepts empty comments around dictionary keys and values' do
+        expect(Reader.new('{/**/"a"/**/=/**/"b"/**/;/**/}').parse!.as_ruby).to eq('a' => 'b')
+      end
+
+      it 'retains an empty trailing annotation after a nonempty one' do
+        expect(Reader.new('"a" /*first*/ /**/').parse!.root_object.annotation).to eq('')
+      end
+    end
+
     describe 'reading annotations' do
       let(:string) { '{a /*annotation*/ = ( b /*another annotation*/ )}' }
       let(:reader) { Reader.new(string) }
