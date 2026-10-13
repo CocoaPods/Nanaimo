@@ -8,7 +8,38 @@
 
 ##### Bug Fixes
 
-* None.  
+* Fix reading multiline hex data while preserving legacy spaces between nibbles.  
+  [Samuel Giddins](https://github.com/segiddins)
+
+* Reject ASCII arrays and dictionaries without their closing delimiters.  
+  [Samuel Giddins](https://github.com/segiddins)
+
+* Quote native strings beginning with line-comment delimiters.  
+  [Samuel Giddins](https://github.com/segiddins)
+
+* Allow empty block comments in ASCII plists.  
+  [Samuel Giddins](https://github.com/segiddins)
+
+* Fix reading escaped literal newlines in quoted strings.  
+  [Samuel Giddins](https://github.com/segiddins)
+
+* Decode ASCII octal escapes and the NeXTSTEP byte boundary correctly.  
+  [Samuel Giddins](https://github.com/segiddins)
+
+* Decode one- and two-digit octal escapes as characters instead of literal digits.  
+  [Samuel Giddins](https://github.com/segiddins)
+
+* Combine escaped UTF-16 surrogate pairs into valid Unicode characters.  
+  [Samuel Giddins](https://github.com/segiddins)
+
+* Preserve carriage returns in XML plist strings and dictionary keys.  
+  [Samuel Giddins](https://github.com/segiddins)
+
+* Write XML dates as UTC timestamps without requiring callers to load time.  
+  [Samuel Giddins](https://github.com/segiddins)
+
+* Write wrapped XML dictionary keys using their actual string values.  
+  [Samuel Giddins](https://github.com/segiddins)
 
 
 ## 0.4.0 (2024-10-03)
