@@ -206,6 +206,32 @@ module Nanaimo
         expect(subject).to eq Nanaimo::Dictionary.new({ Nanaimo::String.new('key', '') => Nanaimo::Data.new("\x00\x01\xab\xab\xcf\x99\x7c", '') }, '')
       end
 
+      it 'round trips data that the writer splits across lines' do
+        bytes = "\x00" * 9
+        output = Writer.new(Plist.new(Nanaimo::Data.new(bytes, nil))).write
+        expect(Reader.new(output).parse!.as_ruby).to eq(bytes)
+      end
+
+      it 'accepts CoreFoundation whitespace between complete hex bytes' do
+        expect(Reader.new("<00\t01\n02\r03\u2028ab\u2029cd>").parse!.as_ruby).to eq("\x00\x01\x02\x03\xab\xcd".b)
+      end
+
+      ["\t", "\n", "\r", "\u2028", "\u2029"].each do |whitespace|
+        it "rejects #{whitespace.inspect} between hex nibbles" do
+          expect { Reader.new("<0#{whitespace}0>").parse! }.to raise_error(Reader::ParseError)
+        end
+      end
+
+      ["\v", "\f"].each do |whitespace|
+        it "rejects #{whitespace.inspect} inside data" do
+          expect { Reader.new("<#{whitespace}>").parse! }.to raise_error(Reader::ParseError)
+        end
+      end
+
+      it 'preserves legacy spaces between hex nibbles' do
+        expect(Reader.new('<0 0>').parse!.as_ruby).to eq("\x00".b)
+      end
+
       context 'with an odd number of hex digits' do
         let(:data) { '<12 3>' }
 
