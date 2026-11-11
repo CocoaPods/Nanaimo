@@ -44,6 +44,10 @@
 * Write XML plist data on Ruby 3.4+ without depending on the base64 gem.  
   [Samuel Giddins](https://github.com/segiddins)
 
+* Detect binary plists that are not valid UTF-8 instead of raising `ArgumentError`.  
+  [tosbaha](https://github.com/tosbaha)
+  [#63](https://github.com/CocoaPods/Nanaimo/issues/63)
+
 
 ## 0.4.0 (2024-10-03)
 
