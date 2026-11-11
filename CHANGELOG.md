@@ -8,7 +8,9 @@
 
 ##### Bug Fixes
 
-* None.  
+* Fix writing XML `<data>` on Ruby 3.4 and later, where `base64` is not loaded
+  unless declared: use `pack('m0')` instead.  
+  [Jerome Lacoste](https://github.com/lacostej)
 
 
 ## 0.4.0 (2024-10-03)
