@@ -8,6 +8,8 @@ module Nanaimo
     class PBXProjWriter < Writer
       ISA = String.new('isa', '')
       private_constant :ISA
+      ONE_LINE_LISTS = %w[attributesByRelativePath platformFiltersByRelativePath].freeze
+      private_constant :ONE_LINE_LISTS
 
       def initialize(plist, **args)
         super(plist, **args)
@@ -47,7 +49,7 @@ module Nanaimo
 
         flat = @flat_lists
         # Xcode writes the lists in these dictionaries on one line from objectVersion 77, and on several lines before.
-        @flat_lists = value_for(k).to_s.end_with?('ByRelativePath') && (object_version || 0) >= 77 if indent == 3
+        @flat_lists = ONE_LINE_LISTS.include?(value_for(k)) && (object_version || 0) >= 77 if indent == 3
         super
       ensure
         @flat_lists = flat

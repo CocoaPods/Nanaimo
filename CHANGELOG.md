@@ -44,9 +44,9 @@
 * Write XML plist data on Ruby 3.4+ without depending on the base64 gem.  
   [Samuel Giddins](https://github.com/segiddins)
 
-* Write the lists in `*ByRelativePath` dictionaries on one line in projects at
-  `objectVersion` 77 and later, as Xcode does, so saving them no longer
-  reformats them.  
+* Write the lists in `attributesByRelativePath` and
+  `platformFiltersByRelativePath` on one line in projects at `objectVersion` 77
+  and later, as Xcode does, so saving them no longer reformats them.  
   [Jerome Lacoste](https://github.com/lacostej)
 
 
