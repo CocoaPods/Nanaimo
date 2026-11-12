@@ -45,7 +45,20 @@ module Nanaimo
         # section if we're further "indented" (aka deeper) in the project
         @objects_section = true if indent == 1 && value_for(k) == 'objects'
 
+        flat = @flat_lists
+        # Xcode writes the lists in these dictionaries on one line from objectVersion 77, and on several lines before.
+        @flat_lists = value_for(k).to_s.end_with?('ByRelativePath') && (object_version || 0) >= 77 if indent == 3
         super
+      ensure
+        @flat_lists = flat
+      end
+
+      def write_array(object)
+        n = newlines
+        @newlines = false if @flat_lists
+        super
+      ensure
+        @newlines = n
       end
 
       def sort_dictionary(dictionary, key_can_be_isa: true)
@@ -77,6 +90,14 @@ module Nanaimo
         else
           false
         end
+      end
+
+      def object_version
+        return @object_version if defined?(@object_version)
+        root = value_for(@plist.root_object)
+        entry = root.find { |k, _v| value_for(k) == 'objectVersion' } if root.is_a?(Hash)
+        version = entry && value_for(entry.last).to_s
+        @object_version = version =~ /\A\d+\z/ ? version.to_i : nil
       end
     end
   end
