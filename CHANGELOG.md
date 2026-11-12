@@ -44,6 +44,12 @@
 * Write XML plist data on Ruby 3.4+ without depending on the base64 gem.  
   [Samuel Giddins](https://github.com/segiddins)
 
+* Write `PBXFileSystemSynchronizedRootGroup` on one line in projects below
+  `objectVersion` 77, as Xcode does, so saving them no longer reformats it.  
+  [robnadin](https://github.com/robnadin)
+  [Jerome Lacoste](https://github.com/lacostej)
+  [#67](https://github.com/CocoaPods/Nanaimo/pull/67)
+
 
 ## 0.4.0 (2024-10-03)
 
