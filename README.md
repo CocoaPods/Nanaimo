@@ -36,7 +36,7 @@ project_hash = Nanaimo::Reader
 project_hash['...'] = '...'
 
 # re-serialize it
-ascii_plist_string = Nanaimo::Writer.new(project_hash).write
+ascii_plist_string = Nanaimo::Writer.new(Nanaimo::Plist.new(project_hash, :ascii)).write
 ```
 
 ## Development
