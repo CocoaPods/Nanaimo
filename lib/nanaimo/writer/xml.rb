@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-autoload :Base64, 'base64'
 autoload :Date, 'date'
 autoload :DateTime, 'date'
 
@@ -25,6 +24,8 @@ module Nanaimo
 
       def write_object(object)
         case object
+        when ::String, ::Hash, ::Array, Nanaimo::Object, Symbol
+          super
         when Float, Integer
           write_number(object)
         when Time, Date, DateTime
@@ -76,7 +77,7 @@ module Nanaimo
 
       def write_data(object)
         output << '<data>'
-        data = Base64.encode64(value_for(object)).delete("\n")
+        data = [value_for(object)].pack('m0')
         data = data.scan(/.{1,76}/).join("\n") if pretty
         output << data << '</data>'
       end
@@ -107,11 +108,13 @@ module Nanaimo
       def write_dictionary(object)
         object = value_for(object)
         return output << '<dict/>' if object.empty?
-        keys = object.keys.sort_by(&:to_s)
-        object = keys.each_with_object({}) do |key, hash|
-          hash[key.to_s] = object[key]
+        stringified = {}
+        object.each { |key, value| stringified[key.to_s] = value }
+        write_dictionary_start
+        stringified.keys.sort!.each do |key|
+          write_dictionary_key_value_pair(key, stringified[key])
         end
-        super(object)
+        write_dictionary_end
       end
 
       def write_dictionary_start

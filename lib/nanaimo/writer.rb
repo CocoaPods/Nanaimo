@@ -37,8 +37,10 @@ module Nanaimo
       @pretty = pretty
       @output = output
       @indent = 0
+      @indent_string = ''
       @newlines = true
       @strict = strict
+      @needs_quotes = {}
     end
 
     # Writes the plist to the given output.
@@ -63,39 +65,55 @@ module Nanaimo
     end
 
     def write_newline
-      output << if newlines
-                  "\n"
-                else
-                  ' '
-                end
+      output << (@newlines ? "\n" : ' ')
     end
 
     def write_object(object)
       case object
-      when Array, ::Array
-        write_array(object)
+      when String
+        write_string(object)
+      when QuotedString
+        write_quoted_string(object)
+      when ::String, Symbol
+        needs_quotes?(object) ? write_quoted_string(object) : write_string(object)
       when Dictionary, ::Hash
         write_dictionary(object)
-      when QUOTED_STRING_REGEXP, QuotedString
-        write_quoted_string(object)
-      when String, ::String, Symbol
-        write_string(object)
+      when Array, ::Array
+        write_array(object)
       when Data
         write_data(object)
       else
         raise UnsupportedPlistTypeError.new(plist_format, object) if strict
         write_string_quoted_if_necessary(object)
       end
-      write_annotation(object) if pretty
+      write_annotation(object) if @pretty
       output
     end
 
     QUOTED_STRING_REGEXP = %r{\A\z|[^\w\.\$/]|\A___}
-    private_constant :QUOTED_STRING_REGEXP
+    UNQUOTED_STRING_REGEXP = %r{\A[\w.$/]+\z}
+    private_constant :QUOTED_STRING_REGEXP, :UNQUOTED_STRING_REGEXP
+
+    def needs_quotes?(string)
+      cached = @needs_quotes[string]
+      return cached unless cached.nil?
+      @needs_quotes[string] = compute_needs_quotes(string)
+    end
+
+    if UNQUOTED_STRING_REGEXP.respond_to?(:match?)
+      def compute_needs_quotes(string)
+        string = string.to_s if string.is_a?(Symbol)
+        !UNQUOTED_STRING_REGEXP.match?(string) || string.start_with?('___')
+      end
+    else
+      def compute_needs_quotes(string)
+        QUOTED_STRING_REGEXP =~ string ? true : false
+      end
+    end
 
     def write_string_quoted_if_necessary(object)
       string = object.to_s
-      string =~ QUOTED_STRING_REGEXP ? write_quoted_string(string) : write_string(string)
+      needs_quotes?(string) ? write_quoted_string(string) : write_string(string)
     end
 
     def write_string(object)
@@ -108,10 +126,15 @@ module Nanaimo
 
     def write_data(object)
       output << '<'
-      value_for(object).unpack('H*').first.chars.each_with_index do |c, i|
-        output << "\n" if i > 0 && (i % 16).zero?
-        output << ' ' if i > 0 && (i % 4).zero?
-        output << c
+      hex = value_for(object).unpack('H*').first
+      i = 0
+      while i < hex.size
+        if i > 0
+          output << "\n" if (i % 16).zero?
+          output << ' '
+        end
+        output << hex[i, 4]
+        i += 4
       end
       output << '>'
     end
@@ -178,7 +201,7 @@ module Nanaimo
       return output unless object.is_a?(Nanaimo::Object)
       annotation = object.annotation
       return output unless annotation && !annotation.empty?
-      output << " /*#{annotation}*/"
+      output << ' /*' << annotation << '*/'
     end
 
     def value_for(object)
@@ -189,17 +212,22 @@ module Nanaimo
       end
     end
 
+    INDENTS = ::Array.new(32) { |i| ("\t" * i).freeze }.freeze
+    private_constant :INDENTS
+
     def push_indent!
       @indent += 1
+      @indent_string = INDENTS[@indent] || "\t" * @indent
     end
 
     def pop_indent!
       @indent -= 1
       @indent = 0 if @indent < 0
+      @indent_string = INDENTS[@indent] || "\t" * @indent
     end
 
     def write_indent
-      output << "\t" * indent if newlines
+      output << @indent_string if @newlines
       output
     end
   end

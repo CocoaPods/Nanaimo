@@ -13,8 +13,8 @@ module Nanaimo
     attr_accessor :annotation
 
     def initialize(value, annotation)
-      self.value = value
-      self.annotation = annotation
+      @value = value
+      @annotation = annotation
 
       raise 'Item cannot be initialize with a nil value' if value.nil?
     end
@@ -96,7 +96,9 @@ module Nanaimo
   #
   class Dictionary < Object
     def as_ruby
-      Hash[value.map { |k, v| [k.as_ruby, v.as_ruby] }]
+      hash = {}
+      value.each { |k, v| hash[k.as_ruby] = v.as_ruby }
+      hash
     end
   end
 end
