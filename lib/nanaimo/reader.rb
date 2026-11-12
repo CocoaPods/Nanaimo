@@ -153,7 +153,7 @@ module Nanaimo
     end
 
     def parse_quotedstring(quote)
-      unless string = @scanner.scan(/(?:([^#{quote}\\]|\\.)*)#{quote}/)
+      unless string = @scanner.scan(/(?:([^#{quote}\\]|\\.)*)#{quote}/m)
         raise_parser_error ParseError, "Unterminated quoted string, expected #{quote} but never found it"
       end
       string = Unicode.unquotify_string(string.chomp!(quote))
@@ -162,7 +162,7 @@ module Nanaimo
 
     def parse_array
       objects = []
-      until @scanner.eos?
+      loop do
         _comment = skip_to_non_space_matching_annotations
         break if @scanner.skip(/\)/)
 
@@ -180,7 +180,7 @@ module Nanaimo
 
     def parse_dictionary
       objects = {}
-      until @scanner.eos?
+      loop do
         _comment = skip_to_non_space_matching_annotations
         break if @scanner.skip(/}/)
 
@@ -204,15 +204,16 @@ module Nanaimo
     end
 
     def parse_data
-      unless data = @scanner.scan(/[\h ]*>/)
+      unless data = @scanner.scan(/(?:\h| |#{DATA_WHITESPACE})*>/)
         raise_parser_error ParseError, "Data missing closing '>'"
       end
       data.chomp!('>')
       data.delete!(' ')
-      unless data.size.even?
+      unless data.split(DATA_WHITESPACE).all? { |bytes| bytes.size.even? }
         @scanner.unscan
         raise_parser_error ParseError, 'Data has an uneven number of hex digits'
       end
+      data.gsub!(DATA_WHITESPACE, '')
       data = [data].pack('H*')
       Nanaimo::Data.new(data, nil)
     end
@@ -234,6 +235,7 @@ module Nanaimo
 
     NEWLINE_CHARACTERS = %W(\x0A \x0D \u2028 \u2029).freeze
     NEWLINE = Regexp.union(*NEWLINE_CHARACTERS)
+    DATA_WHITESPACE = Regexp.union(NEWLINE, "\t")
 
     WHITESPACE_CHARACTERS = NEWLINE_CHARACTERS + %W(\x09 \x0B \x0C \x20)
     WHITESPACE = Regexp.union(*WHITESPACE_CHARACTERS)
@@ -241,7 +243,7 @@ module Nanaimo
     MANY_WHITESPACES = /#{WHITESPACE}+/
 
     def read_multiline_comment
-      unless annotation = @scanner.scan(%r{(?:.+?)(?=\*/)}m)
+      unless annotation = @scanner.scan(%r{(?:.*?)(?=\*/)}m)
         raise_parser_error ParseError, 'Failed to terminate multiline comment'
       end
       @scanner.skip(%r{\*/})

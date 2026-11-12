@@ -65,6 +65,32 @@ module Nanaimo
       end
     end
 
+    describe 'native strings beginning with comment delimiters' do
+      ['//', '//server/share', '///', '/*'].each do |string|
+        it "quotes and round trips #{string.inspect}" do
+          [Writer, Writer::PBXProjWriter].each do |writer|
+            [true, false].each do |pretty_output|
+              output = writer.new(Plist.new(string), pretty: pretty_output).write
+              expect(output).to eq("#{utf8}\"#{string}\"\n")
+              expect(Reader.new(output).parse!.as_ruby).to eq(string)
+            end
+          end
+        end
+      end
+
+      it 'round trips comment-prefixed dictionary keys and values' do
+        value = { '//' => ['//server/share', '/*'] }
+        output = Writer.new(Plist.new(value)).write
+        expect(Reader.new(output).parse!.as_ruby).to eq(value)
+      end
+
+      it 'leaves safe interior slashes unquoted' do
+        output = Writer.new(Plist.new('a//b')).write
+        expect(output).to eq("#{utf8}a//b\n")
+        expect(Reader.new(output).parse!.as_ruby).to eq('a//b')
+      end
+    end
+
     describe String do
       describe 'in general' do
         let(:root_object) { String.new('Value', 'A whimsical value') }
