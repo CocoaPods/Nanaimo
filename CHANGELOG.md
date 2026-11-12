@@ -44,6 +44,10 @@
 * Write XML plist data on Ruby 3.4+ without depending on the base64 gem.  
   [Samuel Giddins](https://github.com/segiddins)
 
+* Write `*/` inside an annotation as `(*)/`, as Xcode does, so a name containing
+  `*/` no longer ends the comment early and produces a plist that cannot be read.  
+  [Jerome Lacoste](https://github.com/lacostej)
+
 
 ## 0.4.0 (2024-10-03)
 
