@@ -19,6 +19,14 @@ module Nanaimo
         end
       end
 
+      context 'when an annotation contains */' do
+        let(:root_object) { String.new('a', 'Group */ Name') }
+        it 'writes it as (*)/, as Xcode does' do
+          expect(subject).to eq "#{utf8}a /*Group (*)/ Name*/\n"
+          expect(Reader.new(subject).parse!.root_object.value).to eq 'a'
+        end
+      end
+
       context 'when there are no annotations' do
         let(:root_object) { String.new('a', '') }
         it 'does not write one' do
