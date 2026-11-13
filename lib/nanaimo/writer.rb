@@ -178,7 +178,8 @@ module Nanaimo
       return output unless object.is_a?(Nanaimo::Object)
       annotation = object.annotation
       return output unless annotation && !annotation.empty?
-      output << " /*#{annotation}*/"
+      # Write */ as (*)/, as Xcode does, so the comment does not end early.
+      output << " /*#{annotation.gsub('*/', '(*)/')}*/"
     end
 
     def value_for(object)
