@@ -310,6 +310,20 @@ module Nanaimo
       end
     end
 
+    describe 'binary plists' do
+      # The start of a binary plist with a dictionary root, as File.read returns it: the 0xDn marker at byte 8 makes it invalid UTF-8.
+      let(:contents) { "bplist00\xD2\x01\x02\x03\x04_\x10\x1A" }
+
+      it 'are detected' do
+        expect(contents).not_to be_valid_encoding
+        expect(Reader.plist_type(contents)).to eq(:binary)
+      end
+
+      it 'raise an unsupported format error when parsed' do
+        expect { Reader.new(contents).parse! }.to raise_error(Reader::UnsupportedPlistFormatError, 'binary plists are currently unsupported')
+      end
+    end
+
     describe 'parse errors' do
       shared_examples_for 'parse errors' do |name, plist, expected_error|
         it "raises an informative error #{name}" do

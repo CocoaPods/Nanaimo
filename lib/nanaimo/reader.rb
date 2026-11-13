@@ -73,10 +73,9 @@ module Nanaimo
     # @return [Symbol] The file format of the plist in the given string.
     #
     def self.plist_type(plist_contents)
-      case plist_contents
-      when /\Abplist/
+      if plist_contents.start_with?('bplist')
         :binary
-      when /\A<\?xml/
+      elsif plist_contents.start_with?('<?xml')
         :xml
       else
         :ascii
