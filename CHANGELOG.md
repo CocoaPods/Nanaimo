@@ -44,6 +44,10 @@
 * Write XML plist data on Ruby 3.4+ without depending on the base64 gem.  
   [Samuel Giddins](https://github.com/segiddins)
 
+* Raise a `ParseError` when a dictionary key is not a string, as CoreFoundation
+  does; such a plist could be read, but writing it raised `ArgumentError`.  
+  [Jerome Lacoste](https://github.com/lacostej)
+
 
 ## 0.4.0 (2024-10-03)
 

@@ -340,6 +340,19 @@ module Nanaimo
            #  -------------------------------------------
         E
 
+      { 'an array' => '( b )', 'a dictionary' => '{ b = c; }', 'data' => '<0b>' }.each do |name, key|
+        include_examples 'parse errors',
+                         "with #{name} as a dictionary key",
+                         "{ a = 1; #{key} = 2; }",
+                         <<-E
+            [!] Dictionary key must be a string
+             #  -------------------------------------------
+            1>  { a = 1; #{key} = 2; }
+                         ^
+             #  -------------------------------------------
+          E
+      end
+
       include_examples 'parse errors',
                        'with an unterminated array',
                        <<-PLIST,

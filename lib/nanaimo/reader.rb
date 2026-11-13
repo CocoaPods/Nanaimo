@@ -184,7 +184,12 @@ module Nanaimo
         _comment = skip_to_non_space_matching_annotations
         break if @scanner.skip(/}/)
 
+        key_pos = @scanner.pos
         key = parse_object(already_parsed_comment: true)
+        unless key.is_a?(Nanaimo::String) || key.is_a?(Nanaimo::QuotedString)
+          @scanner.pos = key_pos
+          raise_parser_error ParseError, 'Dictionary key must be a string'
+        end
         eat_whitespace!
         unless @scanner.skip(/=/)
           raise_parser_error ParseError, "Dictionary missing value for key #{key.as_ruby.inspect}, expected '=' and found #{current_character.inspect}"
