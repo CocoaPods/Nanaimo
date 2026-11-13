@@ -74,9 +74,21 @@ module Nanaimo
         case isa_for(dictionary)
         when 'PBXBuildFile', 'PBXFileReference'
           true
+        when 'PBXFileSystemSynchronizedRootGroup'
+          # Xcode writes these on one line in projects below objectVersion 77, and on several lines from 77.
+          version = object_version
+          !version.nil? && version < 77
         else
           false
         end
+      end
+
+      def object_version
+        return @object_version if defined?(@object_version)
+        root = value_for(@plist.root_object)
+        entry = root.find { |k, _v| value_for(k) == 'objectVersion' } if root.is_a?(Hash)
+        version = entry && value_for(entry.last).to_s
+        @object_version = version =~ /\A\d+\z/ ? version.to_i : nil
       end
     end
   end
