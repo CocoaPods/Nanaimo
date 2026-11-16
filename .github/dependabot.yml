@@ -12,3 +12,7 @@ updates:
   - dependency-name: rubocop
     versions:
     - "> 0.52.1"
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: weekly
